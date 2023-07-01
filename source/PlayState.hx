@@ -2,6 +2,7 @@ package;
 
 import Song.Event;
 import openfl.media.Sound;
+import ui.Mobilecontrols;
 #if sys
 import sys.io.File;
 import smTools.SMFile;
@@ -246,8 +247,6 @@ class PlayState extends MusicBeatState
 	var inCutscene:Bool = false;
 	var usedTimeTravel:Bool = false;
 
-	var video:MP4Handler = new MP4Handler();
-
 	public static var repPresses:Int = 0;
 	public static var repReleases:Int = 0;
 
@@ -272,6 +271,10 @@ class PlayState extends MusicBeatState
 
 	public static var highestCombo:Int = 0;
 
+	#if mobileC
+	var mcontrols:Mobilecontrols; 
+	#end
+
 	private var executeModchart = false;
 
 	// Animation common suffixes
@@ -295,7 +298,9 @@ class PlayState extends MusicBeatState
 	override public function create()
 	{
 
+		#if desktop
 		FlxG.mouse.visible = false;
+		#end
 		instance = this;
 
 		if (FlxG.save.data.fpsCap > 290)
@@ -1246,6 +1251,30 @@ class PlayState extends MusicBeatState
 
 		add(lyrics);
 
+		#if mobileC
+			mcontrols = new Mobilecontrols();
+			switch (mcontrols.mode)
+			{
+				case VIRTUALPAD_RIGHT | VIRTUALPAD_LEFT | VIRTUALPAD_CUSTOM:
+					controls.setVirtualPad(mcontrols._virtualPad, FULL, NONE);
+				case HITBOX:
+					controls.setHitBox(mcontrols._hitbox);
+				default:
+			}
+			trackedinputs = controls.trackedinputs;
+			controls.trackedinputs = [];
+
+			var camcontrol = new FlxCamera();
+			FlxG.cameras.add(camcontrol);
+			camcontrol.bgColor.alpha = 0;
+			mcontrols.cameras = [camcontrol];
+
+			mcontrols.visible = false;
+
+			add(mcontrols);
+		#end
+
+
 		// if (SONG.song == 'South')
 		// FlxG.camera.alpha = 0.7;
 		// UI_camera.zoom = 1;
@@ -1436,6 +1465,10 @@ class PlayState extends MusicBeatState
 
 	function startCountdown():Void
 	{
+		#if mobileC
+		mcontrols.visible = true;
+		#end
+
 		inCutscene = false;
 		start.visible = true;
 		if (curSong == 'Chug' || curSong == 'Infinite') {
@@ -2483,7 +2516,7 @@ class PlayState extends MusicBeatState
 
 		scoreTxt.x = (originalX - (lengthInPx / 2)) + 335;
 
-		if (controls.PAUSE && startedCountdown && canPause)
+		if (controls.PAUSE #if android || FlxG.android.justReleased.BACK #end && startedCountdown && canPause)
 		{
 			persistentUpdate = false;
 			persistentDraw = true;
@@ -2514,8 +2547,8 @@ class PlayState extends MusicBeatState
 			cannotDie = true;
 			#if windows
 			DiscordClient.changePresence("Chart Editor", null, null, true);
-			#end
 			FlxG.switchState(new ChartingState());
+			#end
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_DOWN, handleInput);
 			FlxG.stage.removeEventListener(KeyboardEvent.KEY_UP, releaseInput);
 			#if windows
@@ -3321,6 +3354,11 @@ class PlayState extends MusicBeatState
 			PlayState.instance.remove(PlayState.instance.videoSprite);
 		}
 
+		#if mobileC
+		mcontrols.visible = false;
+		#end
+
+
 		if (isStoryMode)
 			campaignMisses = misses;
 
@@ -3406,7 +3444,9 @@ class PlayState extends MusicBeatState
 
 					if (SONG.validScore)
 					{
+						#if newgrounds
 						NGio.unlockMedal(60961);
+						#end
 						Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty);
 					}
 

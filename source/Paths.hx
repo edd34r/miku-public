@@ -95,8 +95,13 @@ class Paths
 
 	inline static public function video(key:String, ?library:String)
 	{
+		#if desktop
 		trace('assets/videos/$key.mp4');
 		return getPath('videos/$key.mp4', BINARY, library);
+		#elseif mobile
+		trace(getPath('videos/$key', BINARY, library));
+		return 'assets/videos/$key'; //Verificar se precisa adicionar o .html no final
+		#end
 	}
 
 	inline static public function music(key:String, ?library:String)

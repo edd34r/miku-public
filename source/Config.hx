@@ -1,5 +1,8 @@
 package;
 
+import flixel.math.FlxPoint;
+import ui.FlxVirtualPad;
+import flixel.util.FlxSave;
 import flixel.FlxG;
 using StringTools;
 
@@ -16,6 +19,14 @@ class Config
 	public static var noteGlow:Bool;
 	public static var noRandomTap:Bool;
 	public static var noFpsCap:Bool;
+
+	var save:FlxSave;
+
+    public function new()
+    {
+        save = new FlxSave();
+		save.bind("saveconrtol");
+    }
 
 	public static function resetSettings():Void{
 
@@ -46,6 +57,58 @@ class Config
 		noRandomTap = FlxG.save.data.noRandomTap;
 		noFpsCap = FlxG.save.data.noFpsCap;
 	}
+
+	public function setcontrolmode(mode:Int = 0):Int {
+        // save control mode num from FlxSave
+		if (save.data.buttonsmode == null) save.data.buttonsmode = new Array();
+        save.data.buttonsmode[0] = mode;
+        save.flush();
+
+        return save.data.buttonsmode[0];
+    }
+
+	public function loadcustom(_pad:FlxVirtualPad):FlxVirtualPad {
+		//load pad
+		if (save.data.buttons == null) return _pad;
+		var tempCount:Int = 0;
+
+		for(buttons in _pad)
+		{
+			buttons.x = save.data.buttons[tempCount].x;
+			buttons.y = save.data.buttons[tempCount].y;
+			tempCount++;
+		}
+        return _pad;
+	}
+
+	public function savecustom(_pad:FlxVirtualPad) {
+		trace("saved");
+
+		if (save.data.buttons == null)
+		{
+			save.data.buttons = new Array();
+
+			for (buttons in _pad)
+			{
+				save.data.buttons.push(FlxPoint.get(buttons.x, buttons.y));
+			}
+		}else
+		{
+			var tempCount:Int = 0;
+			for (buttons in _pad)
+			{
+				save.data.buttons[tempCount] = FlxPoint.get(buttons.x, buttons.y);
+				tempCount++;
+			}
+		}
+		save.flush();
+	}
+
+	public function getcontrolmode():Int {
+        // load control mode num from FlxSave
+		if (save.data.buttonsmode != null) return save.data.buttonsmode[0];
+        return 0;
+    }
 	
 	public static function write(
 								offsetW:Float, 

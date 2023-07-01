@@ -12,7 +12,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
-import io.newgrounds.NG;
 import lime.app.Application;
 import flash.display.BitmapData;
 import openfl.Assets;

@@ -12,7 +12,6 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.addons.display.FlxBackdrop;
-import io.newgrounds.NG;
 import lime.app.Application;
 import flash.display.BitmapData;
 import openfl.Assets;
@@ -153,6 +152,11 @@ class MainMenuState extends MusicBeatState
 		// NG.core.calls.event.logEvent('swag').send();
 
 		changeItem();
+
+		#if mobileC
+		addVirtualPad(UP_DOWN, A_B);
+		#end
+
 		
 
 		super.create();

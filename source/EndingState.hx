@@ -22,8 +22,10 @@ class EndingState extends MusicBeatState
 
 	var zoom:Float = -1;
 
+	#if desktop
 	var video:MP4Handler = new MP4Handler();
-	
+	#end
+
 	public function new(goodEnding:Bool = true) 
 	{
 		super();
@@ -36,7 +38,11 @@ class EndingState extends MusicBeatState
 		trace(PlayState.storyWeek);
 		super.create();	
 		FlxG.camera.fade(FlxColor.BLACK, 0.8, true);
+		#if desktop
 		video.playMP4(Paths.video('creditsend'), new MainMenuState());
+		#elseif mobile
+		LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'creditsend', new MainMenuState()));
+		#end
 	}
 	
 	override public function update(elapsed:Float):Void 

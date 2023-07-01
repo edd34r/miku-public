@@ -56,7 +56,9 @@ class Caching extends MusicBeatState
 
 		KadeEngineData.initSave();
 
+		#if desktop
 		FlxG.mouse.visible = false;
+		#end
 
 		FlxG.worldBounds.set(0,0);
 

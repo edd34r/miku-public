@@ -70,7 +70,12 @@ class OptionsMenu extends MusicBeatState
 			new ResetScoreOption("Reset your score on all songs and weeks. This is irreversible!"),
 	//		new LockWeeksOption("Reset your story mode progress. This is irreversible!"),
 			new ResetSettings("Reset ALL your settings. This is irreversible!")
-		])
+		])#if mobileC ,
+	
+		new OptionCategory("Mobile settings", [
+			new CustomControls("edit a control"),
+			new About("about android port")
+		]) #end
 		
 	];
 
@@ -132,6 +137,11 @@ class OptionsMenu extends MusicBeatState
 	//	FlxTween.tween(versionShit,{y: FlxG.height - 18},2,{ease: FlxEase.elasticInOut});
 	//	FlxTween.tween(blackBorder,{y: FlxG.height - 18},2, {ease: FlxEase.elasticInOut});
 
+		#if mobileC
+		addVirtualPad(FULL, A_B);
+		#end
+
+
 		super.create();
 	}
 
@@ -180,9 +190,9 @@ class OptionsMenu extends MusicBeatState
 				}
 			}
 			
-			if (FlxG.keys.justPressed.UP)
+			if (controls.UP_P)
 				changeSelection(-1);
-			if (FlxG.keys.justPressed.DOWN)
+			if (controls.DOWN_P)
 				changeSelection(1);
 			
 			if (isCat)
@@ -198,9 +208,9 @@ class OptionsMenu extends MusicBeatState
 						}
 					else
 					{
-						if (FlxG.keys.justPressed.RIGHT)
+						if (controls.RIGHT)
 							currentSelectedCat.getOptions()[curSelected].right();
-						if (FlxG.keys.justPressed.LEFT)
+						if (controls.LEFT)
 							currentSelectedCat.getOptions()[curSelected].left();
 					}
 				}

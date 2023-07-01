@@ -24,7 +24,6 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import flixel.addons.display.FlxBackdrop;
-import io.newgrounds.NG;
 import lime.app.Application;
 import openfl.Assets;
 
@@ -64,10 +63,13 @@ class TitleState extends MusicBeatState
 	override public function create():Void
 	{
 		
+		#if android
+		FlxG.android.preventDefaultKeys = [BACK];
+		#end
 		
 		#if sys
-		if (!sys.FileSystem.exists(Sys.getCwd() + "/assets/replays"))
-			sys.FileSystem.createDirectory(Sys.getCwd() + "/assets/replays");
+		if (!sys.FileSystem.exists(#if android Main.path #else Sys.getCwd() #end + "/assets/replays"))
+			sys.FileSystem.createDirectory(#if android Main.path #else Sys.getCwd() #end + "/assets/replays");
 		#end
 
 		@:privateAccess
@@ -88,10 +90,13 @@ class TitleState extends MusicBeatState
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
+		/*
 		#if !desktop
 		FlxG.resetGame();
 		#end 
+		 */
 
+		 //ratomanocu pola
 		trace('hello');
 
 		// DEBUG BULLSHIT
@@ -256,7 +261,9 @@ class TitleState extends MusicBeatState
 
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
+		#if desktop
 		FlxG.mouse.visible = false;
+		#end
 
 		if (initialized)
 			skipIntro();
@@ -299,17 +306,7 @@ class TitleState extends MusicBeatState
 			Sys.command("start assets/data/loid/message.vbs");
 		}
 
-		var pressedEnter:Bool = controls.ACCEPT;
-
-		#if mobile
-		for (touch in FlxG.touches.list)
-		{
-			if (touch.justPressed)
-			{
-				pressedEnter = true;
-			}
-		}
-		#end
+		var pressedEnter:Bool = controls.ACCEPT || BSLTouchUtils.justTouched();
 
 		if (FlxG.keys.justPressed.M)
 			if (micu == 0) micu = 1;
@@ -377,7 +374,7 @@ class TitleState extends MusicBeatState
 
 		if (pressedEnter && !transitioning && skippedIntro)
 		{
-			#if !switch
+			#if (!switch && newgrounds)
 			NGio.unlockMedal(60960);
 
 			// If it's Friday according to da clock
