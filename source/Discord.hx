@@ -8,6 +8,7 @@ using StringTools;
 
 class DiscordClient
 {
+	public static var isInitialized:Bool = false;
 	public function new()
 	{
 		trace("Discord Client starting...");
@@ -61,6 +62,7 @@ class DiscordClient
 			new DiscordClient();
 		});
 		trace("Discord Client initialized");
+		isInitialized = true;
 	}
 
 	public static function changePresence(details:String, state:Null<String>, ?smallImageKey : String, ?hasStartTimestamp : Bool, ?endTimestamp: Float)

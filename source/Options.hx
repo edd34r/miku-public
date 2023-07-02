@@ -74,7 +74,7 @@ class Option
 	public function left():Bool { return throw "stub!"; }
 	public function right():Bool { return throw "stub!"; }
 }
-
+#if mobile
 class CustomControls extends Option
 {
 	public function new(desc:String)
@@ -111,6 +111,7 @@ class About extends Option
 	}
 
 }
+#end
 
 class DFJKOption extends Option
 {

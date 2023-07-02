@@ -57,14 +57,14 @@ public function new(x:Float, y:Float)
 
 		for (i in 0...10){
 
-		var lines:FlxBackdrop = new FlxBackdrop(Paths.image('menuBG/line' + i),0,0,true,false,0,0);
+		var lines:FlxBackdrop = new FlxBackdrop(Paths.image('menuBG/line' + i),X,0,0);
 		lines.antialiasing = true;
 		lines.screenCenter(Y);
 		lines.velocity.x = velocityArray[i];
 		add(lines);
 		}
 
-        var tr:FlxBackdrop = new FlxBackdrop(Paths.image('menuBG/triangles'),0,0,true,false,0,0);
+        var tr:FlxBackdrop = new FlxBackdrop(Paths.image('menuBG/triangles'),X,0,0);
 		tr.antialiasing = true;
 		tr.screenCenter(Y);
 		tr.velocity.x = 200;

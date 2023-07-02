@@ -116,7 +116,7 @@ class Replay
 		var time = Date.now().getTime();
 
 		#if sys
-		File.saveContent(Main.path + "assets/replays/replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data);
+		File.saveContent(#if mobile Main.path + #end "assets/replays/replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay", data);
 
 		path = "replay-" + PlayState.SONG.song + "-time" + time + ".kadeReplay"; // for score screen shit
 
