@@ -26,7 +26,7 @@ class OptionBar extends FlxSpriteGroup{
     public var optionValue:Dynamic;
     public var isSelected:Bool = false;
 
-    var brickArray:Array<String> = ['Gameplay', 'Visual', 'Sons', 'Otimizacao', 'Mobile', 'Teclado'];
+    var brickArray:Array<String> = ['Gameplay', 'Visual', 'Sons', 'Otimizacao', 'Controles Mobile', 'Teclado'];
 
     public function new(x:Float,y:Float,_option:String)
     {

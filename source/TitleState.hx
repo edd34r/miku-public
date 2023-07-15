@@ -481,7 +481,7 @@ class TitleState extends MusicBeatState
 	{
 		var randomInt:Int = FlxG.random.int(0, 100);
 		trace(randomInt);
-		if (randomInt < 1)
+		if (randomInt < 6)
 			FlxG.switchState(new FanState());
 		else
 			FlxG.switchState(new MainMenuState()); // fail but we go anyway

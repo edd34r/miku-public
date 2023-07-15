@@ -3104,8 +3104,7 @@ class PlayState extends MusicBeatState
 			if (PlayStateChangeables.botPlay)
 				msTiming = 0;
 
-			if (!PlayStateChangeables.botPlay)
-				add(rating);
+			add(rating);
 
 			if (!curStage.startsWith('school'))
 			{

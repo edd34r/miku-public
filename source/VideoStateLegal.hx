@@ -34,18 +34,16 @@ class VideoStateLegal extends MusicBeatState
 		text.alpha = 0;
 		add(text);
 
-		
-		if (source.endsWith('creditsend')){
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
 			loadIn = new Transition(0,0,'in');
 			loadIn.animation.finishCallback = function(huh:String){
-			remove(loadIn);
+				remove(loadIn);
+				WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
 			};
 			loadIn.scrollFactor.set(0,0);
 			add(loadIn);
 			loadIn.animation.play('transition');
-		}
 
 		nextState = toTrans;
 
@@ -53,10 +51,6 @@ class VideoStateLegal extends MusicBeatState
 
 		WebView.onClose = onClose;
 		WebView.onURLChanging = onURLChanging;
-
-		new FlxTimer().start(0.8, function(tmr:FlxTimer) {
-			WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
-		});
 	}
 
 	public override function update(dt:Float)

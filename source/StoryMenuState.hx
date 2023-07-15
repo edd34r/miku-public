@@ -122,6 +122,7 @@ class StoryMenuState extends MusicBeatState
 		hard_button.antialiasing = FlxG.save.data.antialiasing;
 		hard_button.y += 45;
 		hard_button.x += 576;
+		hard_button.updateHitbox();
 		add(hard_button);
 
 		easy_button = new FlxSprite(500, 175);
@@ -131,6 +132,7 @@ class StoryMenuState extends MusicBeatState
 		easy_button.antialiasing = FlxG.save.data.antialiasing;
 		easy_button.y += 45;
 		easy_button.x += 181;
+		easy_button.updateHitbox();
 		add(easy_button);
 
 		normal_button = new FlxSprite(500, 175);
@@ -140,6 +142,7 @@ class StoryMenuState extends MusicBeatState
 		normal_button.antialiasing = FlxG.save.data.antialiasing;
 		normal_button.y += 45;
 		normal_button.x += 369;
+		normal_button.updateHitbox();
 		add(normal_button);
 
 
@@ -260,7 +263,7 @@ class StoryMenuState extends MusicBeatState
 			// adjusting the song name to be compatible
 			var songFormat = StringTools.replace(PlayState.storyPlaylist[0], " ", "-");
 
-			var poop:String = Highscore.formatSong(songFormat, curDifficulty);
+			var poop:String = Highscore.formatSong(songFormat, 2);
 			PlayState.sicks = 0;
 			PlayState.bads = 0;
 			PlayState.shits = 0;

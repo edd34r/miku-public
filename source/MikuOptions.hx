@@ -97,13 +97,13 @@ class MikuOptions extends MusicBeatState
 		loadOut.scrollFactor.set(0,0);
 		loadIn.scrollFactor.set(0,0);
 
-        leftButton = new FlxButton(415, 175);
-        leftButton.setGraphicSize(50, FlxG.height - 235);
+        leftButton = new FlxButton(400, 175);
+        leftButton.setGraphicSize(70, FlxG.height - 235); //Garantia
         leftButton.updateHitbox();
         add(leftButton);
 
-        rightButton = new FlxButton(635, 175);
-        rightButton.setGraphicSize(50, FlxG.height - 235);
+        rightButton = new FlxButton(620, 175);
+        rightButton.setGraphicSize(75, FlxG.height - 235); //garantia pt2
         rightButton.updateHitbox();
         add(rightButton);
 

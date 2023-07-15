@@ -1,24 +1,24 @@
 package;
 
 import flixel.ui.FlxButton;
-import flixel.addons.ui.FlxUIButton;
-import flixel.text.FlxText;
+import Config;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
-import ui.FlxVirtualPad;
-import flixel.util.FlxSave;
+import flixel.addons.ui.FlxUIButton;
 import flixel.math.FlxPoint;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import haxe.Json;
+import ui.FlxVirtualPad;
 import ui.Hitbox;
-import Config;
+
+using StringTools;
 #if lime
 import lime.system.Clipboard;
 #end
 
-using StringTools;
 
-class CustomControlsState extends MusicBeatSubstate
+class CustomControlsState extends MusicBeatState //Code desenvolvido dois anos atrás, mas ainda dá pro gasto
 {
 
 	var _pad:FlxVirtualPad;
@@ -38,13 +38,13 @@ class CustomControlsState extends MusicBeatSubstate
 	var leftArrow:FlxSprite;
 	var rightArrow:FlxSprite;
 							//'hitbox',
-	var controlitems:Array<String> = ['right control', 'left control','keyboard','custom', 'hitbox'];
+	var controlitems:Array<String> = ['Controle Destro', 'Controle Canhoto','Teclado','Customizado', 'Hitbox'];
 
 	var curSelected:Int = 0;
 
 	var buttonistouched:Bool = false;
 
-	var bindbutton:flixel.ui.FlxButton;
+	var bindbutton:FlxButton;
 
 	var config:Config;
 
@@ -56,13 +56,13 @@ class CustomControlsState extends MusicBeatSubstate
 		config = new Config();
 
 		// bg
-		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
+		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG/back'));
 		bg.scrollFactor.x = 0;
 		bg.scrollFactor.y = 0.18;
 		bg.setGraphicSize(Std.int(bg.width * 1.1));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = FlxG.save.data.antialiasing;
+		bg.antialiasing = true;
 
 		// load curSelected
 		curSelected = config.getcontrolmode();
@@ -84,20 +84,22 @@ class CustomControlsState extends MusicBeatSubstate
 		leftArrow.frames = ui_tex;
 		leftArrow.animation.addByPrefix('idle', "arrow left");
 		leftArrow.animation.addByPrefix('press', "arrow push left");
+		leftArrow.antialiasing = false;
 		leftArrow.animation.play('idle');
 
 		rightArrow = new FlxSprite(inputvari.x + inputvari.width + 10, leftArrow.y);
 		rightArrow.frames = ui_tex;
 		rightArrow.animation.addByPrefix('idle', 'arrow right');
 		rightArrow.animation.addByPrefix('press', "arrow push right", 24, false);
+		rightArrow.antialiasing = false;
 		rightArrow.animation.play('idle');
 
 
 		//text
-		up_text = new FlxText(200, 200, 0,"Button up x:" + _pad.buttonUp.x +" y:" + _pad.buttonUp.y, 24);
-		down_text = new FlxText(200, 250, 0,"Button down x:" + _pad.buttonDown.x +" y:" + _pad.buttonDown.y, 24);
-		left_text = new FlxText(200, 300, 0,"Button left x:" + _pad.buttonLeft.x +" y:" + _pad.buttonLeft.y, 24);
-		right_text = new FlxText(200, 350, 0,"Button right x:" + _pad.buttonRight.x +" y:" + _pad.buttonRight.y, 24);
+		up_text = new FlxText(200, 200, 0,"Coordenada X do botao Cima:" + _pad.buttonUp.x +" y:" + _pad.buttonUp.y, 24);
+		down_text = new FlxText(200, 250, 0,"Coordenada X do botao Baixo:" + _pad.buttonDown.x +" y:" + _pad.buttonDown.y, 24);
+		left_text = new FlxText(200, 300, 0,"Coordenada X do botao Esquerda" + _pad.buttonLeft.x +" y:" + _pad.buttonLeft.y, 24);
+		right_text = new FlxText(200, 350, 0,"Coordenada X do botao Direita:" + _pad.buttonRight.x +" y:" + _pad.buttonRight.y, 24);
 
 		//hitboxes
 
@@ -106,22 +108,22 @@ class CustomControlsState extends MusicBeatSubstate
 
 		// buttons
 
-		exitbutton = new FlxUIButton(FlxG.width - 650,25,"exit");
+		exitbutton = new FlxUIButton(FlxG.width - 650,25,"Sair");
 		exitbutton.resize(125,50);
 		exitbutton.setLabelFormat("VCR OSD Mono",24,FlxColor.BLACK,"center");
 
-		var savebutton = new FlxUIButton((exitbutton.x + exitbutton.width + 25),25,"exit and save",() -> {
+		var savebutton = new FlxUIButton((exitbutton.x + exitbutton.width + 25),25,"Sair e Salvar",() -> {
 			save();
 			FlxG.switchState(new MikuOptions());
 		});
 		savebutton.resize(250,50);
 		savebutton.setLabelFormat("VCR OSD Mono",24,FlxColor.BLACK,"center");
 
-		exportbutton = new FlxUIButton(FlxG.width - 150, 25, "export", () -> { savetoclipboard(_pad); } );
+		exportbutton = new FlxUIButton(FlxG.width - 150, 25, "Exportar", () -> { savetoclipboard(_pad); } );
 		exportbutton.resize(125,50);
 		exportbutton.setLabelFormat("VCR OSD Mono", 24, FlxColor.BLACK,"center");
 
-		importbutton = new FlxUIButton(exportbutton.x, 100, "import", () -> { loadfromclipboard(_pad); });
+		importbutton = new FlxUIButton(exportbutton.x, 100, "Importar", () -> { loadfromclipboard(_pad); });
 		importbutton.resize(125,50);
 		importbutton.setLabelFormat("VCR OSD Mono", 24, FlxColor.BLACK,"center");
 
@@ -193,7 +195,7 @@ class CustomControlsState extends MusicBeatSubstate
 				curSelected = controlitems.length - 1;
 			if (curSelected >= controlitems.length)
 				curSelected = 0;
-			trace(curSelected);
+			//trace(curSelected);
 
 			if (forceChange != null)
 			{
@@ -227,10 +229,10 @@ class CustomControlsState extends MusicBeatSubstate
 					_pad.alpha = 0.75;
 					this.add(_pad);
 				case 2:
-					trace(2);
+					//trace(2);
 					_pad.alpha = 0;
 				case 3:
-					trace(3);
+					//trace(3);
 					this.add(_pad);
 					_pad.alpha = 0.75;
 					loadcustom();
@@ -307,7 +309,7 @@ class CustomControlsState extends MusicBeatSubstate
 		}
 	}
 
-	function movebutton(touch:flixel.input.touch.FlxTouch, button:flixel.ui.FlxButton) {
+	function movebutton(touch:flixel.input.touch.FlxTouch, button:FlxButton) {
 		button.x = touch.x - _pad.buttonUp.width / 2;
 		button.y = touch.y - _pad.buttonUp.height / 2;
 		bindbutton = button;
@@ -315,10 +317,10 @@ class CustomControlsState extends MusicBeatSubstate
 	}
 
 	function setbuttontexts() {
-		up_text.text = "Button up x:" + _pad.buttonUp.x +" y:" + _pad.buttonUp.y;
-		down_text.text = "Button down x:" + _pad.buttonDown.x +" y:" + _pad.buttonDown.y;
-		left_text.text = "Button left x:" + _pad.buttonLeft.x +" y:" + _pad.buttonLeft.y;
-		right_text.text = "Button right x:" + _pad.buttonRight.x +" y:" + _pad.buttonRight.y;
+		up_text.text = "Coordenada X do botao Cima:" + _pad.buttonUp.x +" y:" + _pad.buttonUp.y;
+		down_text.text = "Coordenada X do botao Baixo:" + _pad.buttonDown.x +" y:" + _pad.buttonDown.y;
+		left_text.text = "Coordenada X do botao Esquerda:" + _pad.buttonLeft.x +" y:" + _pad.buttonLeft.y;
+		right_text.text = "Coordenada X do botao Direita:" + _pad.buttonRight.x +" y:" + _pad.buttonRight.y;
 	}
 
 
@@ -333,7 +335,7 @@ class CustomControlsState extends MusicBeatSubstate
 	}
 
 	function savecustom() {
-		trace("saved");
+		//trace("saved");
 
 		//Config.setdata(55);
 
@@ -355,7 +357,7 @@ class CustomControlsState extends MusicBeatSubstate
 	}
 
 	function savetoclipboard(pad:FlxVirtualPad) {
-		trace("saved");
+		//trace("saved");
 
 		var json = {
 			buttonsarray : []
@@ -373,7 +375,7 @@ class CustomControlsState extends MusicBeatSubstate
 
 		json.buttonsarray = buttonsarray;
 
-		trace(json);
+		//trace(json);
 
 		var data:String = Json.stringify(json);
 
