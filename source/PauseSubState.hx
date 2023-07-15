@@ -27,11 +27,11 @@ class PauseSubState extends MusicBeatSubstate
 	var curSelected:Int = 0;
 	var levelDifficulty:FlxText;
 
-	var pauseMusic:FlxSound;
 	var perSongOffset:FlxText;
 	
 	var offsetChanged:Bool = false;
 	var loadOut:Transition;
+	
 
 	public function new(x:Float, y:Float)
 	{
@@ -45,11 +45,7 @@ class PauseSubState extends MusicBeatSubstate
 				GlobalVideo.get().pause();
 		}
 
-		pauseMusic = new FlxSound().loadEmbedded(Paths.music('breakfast'), true, true);
-		pauseMusic.volume = 0;
-		pauseMusic.play(false, FlxG.random.int(0, Std.int(pauseMusic.length / 2)));
-
-		FlxG.sound.list.add(pauseMusic);
+		
 
 		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
 		bg.alpha = 0;
@@ -119,8 +115,6 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function update(elapsed:Float)
 	{
-		if (pauseMusic.volume < 0.5)
-			pauseMusic.volume += 0.01 * elapsed;
 
 		super.update(elapsed);
 
@@ -162,63 +156,6 @@ class PauseSubState extends MusicBeatSubstate
 		{
 			changeSelection(1);
 		}
-		
-		#if cpp
-			else if (controls.LEFT_P || leftPcontroller)
-			{
-				oldOffset = PlayState.songOffset;
-				PlayState.songOffset -= 1;
-				sys.FileSystem.rename(songPath + oldOffset + '.offset', songPath + PlayState.songOffset + '.offset');
-				perSongOffset.text = "Additive Offset (Left, Right): " + PlayState.songOffset + " - Description - " + 'Adds value to global offset, per song.';
-
-				// Prevent loop from happening every single time the offset changes
-				if(!offsetChanged)
-				{
-					grpMenuShit.clear();
-
-					menuItems = ['Reiniciar Musica', 'Voltar ao Menu'];
-
-					for (i in 0...menuItems.length)
-					{
-						var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-						songText.isMenuItem = true;
-						songText.targetY = i;
-						grpMenuShit.add(songText);
-					}
-
-					changeSelection();
-
-					cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-					offsetChanged = true;
-				}
-			} 
-			else if (controls.RIGHT_P || rightPcontroller)
-			{
-				oldOffset = PlayState.songOffset;
-				PlayState.songOffset += 1;
-				sys.FileSystem.rename(songPath + oldOffset + '.offset', songPath + PlayState.songOffset + '.offset');
-				perSongOffset.text = "Additive Offset (Left, Right): " + PlayState.songOffset + " - Description - " + 'Adds value to global offset, per song.';
-				if(!offsetChanged)
-				{
-					grpMenuShit.clear();
-
-					menuItems = ['Reiniciar Musica', 'Voltar ao Menu'];
-
-					for (i in 0...menuItems.length)
-					{
-						var songText:Alphabet = new Alphabet(0, (70 * i) + 30, menuItems[i], true, false);
-						songText.isMenuItem = true;
-						songText.targetY = i;
-						grpMenuShit.add(songText);
-					}
-
-					changeSelection();
-
-					cameras = [FlxG.cameras.list[FlxG.cameras.list.length - 1]];
-					offsetChanged = true;
-				}
-			}
-		#end
 
 		if (controls.ACCEPT)
 		{
@@ -279,7 +216,6 @@ class PauseSubState extends MusicBeatSubstate
 
 	override function destroy()
 	{
-		pauseMusic.destroy();
 
 		super.destroy();
 	}
@@ -288,7 +224,7 @@ class PauseSubState extends MusicBeatSubstate
 	{
 		curSelected += change;
 		
-		FlxG.sound.play(Paths.sound('scrollMenu'), 0.4);
+		PlayState.scroll.play(true);
 
 		if (curSelected < 0)
 			curSelected = menuItems.length - 1;

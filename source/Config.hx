@@ -36,7 +36,6 @@ class Config
 		FlxG.save.data.healthDrainMultiplier = 1.0;
 		FlxG.save.data.betterIcons = true;
 		FlxG.save.data.downscroll = false;
-		FlxG.save.data.newInput = true;
 		FlxG.save.data.noteGlow = false;
 		FlxG.save.data.noRandomTap = false;
 		FlxG.save.data.noFpsCap = true;
@@ -52,7 +51,6 @@ class Config
 		healthDrainMultiplier = FlxG.save.data.healthDrainMultiplier;
 		betterIcons = FlxG.save.data.betterIcons;
 		downscroll = FlxG.save.data.downscroll;
-		newInput = FlxG.save.data.newInput;
 		noteGlow = FlxG.save.data.noteGlow;
 		noRandomTap = FlxG.save.data.noRandomTap;
 		noFpsCap = FlxG.save.data.noFpsCap;
@@ -117,7 +115,6 @@ class Config
 								healthDrainMultiplierW:Float, 
 								betterIconsW:Bool, 
 								downscrollW:Bool, 
-								newInputW:Bool,
 								noteGlowW:Bool,
 								noRandomTapW:Bool,
 								noFpsCapW:Bool
@@ -130,7 +127,6 @@ class Config
 		FlxG.save.data.healthDrainMultiplier = healthDrainMultiplierW;
 		FlxG.save.data.betterIcons = betterIconsW;
 		FlxG.save.data.downscroll = downscrollW;
-		FlxG.save.data.newInput = newInputW;
 		FlxG.save.data.noteGlow = noteGlowW;
 		FlxG.save.data.noRandomTap = noRandomTapW;
 		FlxG.save.data.noFpsCap = noFpsCapW;
@@ -155,8 +151,6 @@ class Config
 			FlxG.save.data.betterIcons = true;
 		if(FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;
-		if(FlxG.save.data.newInput == null)
-			FlxG.save.data.newInput = true;
 		if(FlxG.save.data.noteGlow == null)
 			FlxG.save.data.noteGlow = false;
 		if(FlxG.save.data.noRandomTap == null)

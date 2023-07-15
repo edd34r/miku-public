@@ -6,7 +6,6 @@ package;
 import flixel.input.gamepad.FlxGamepad;
 import flixel.util.FlxAxes;
 import flixel.FlxSubState;
-import Options.Option;
 import flixel.input.FlxInput;
 import flixel.input.keyboard.FlxKey;
 import flixel.FlxG;
@@ -104,8 +103,6 @@ class KeyBindMenu extends FlxSubState
         FlxTween.tween(keyTextDisplay, {alpha: 1}, 1, {ease: FlxEase.expoInOut});
         FlxTween.tween(infoText, {alpha: 1}, 1.4, {ease: FlxEase.expoInOut});
         FlxTween.tween(blackBox, {alpha: 0.7}, 1, {ease: FlxEase.expoInOut});
-
-       // OptionsMenu.instance.acceptInput = false;
 
         textUpdate();
 
@@ -310,8 +307,6 @@ class KeyBindMenu extends FlxSubState
         state = "exiting";
 
         save();
-
-       // OptionsMenu.instance.acceptInput = true;
 
         FlxTween.tween(keyTextDisplay, {alpha: 0}, 1, {ease: FlxEase.expoInOut});
         FlxTween.tween(blackBox, {alpha: 0}, 1.1, {ease: FlxEase.expoInOut, onComplete: function(flx:FlxTween){close();}});

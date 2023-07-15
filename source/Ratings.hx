@@ -140,12 +140,9 @@ class Ratings
     public static function CalculateRanking(score:Int,scoreDef:Int,nps:Int,maxNPS:Int,accuracy:Float):String
     {
         return
-         (FlxG.save.data.npsDisplay ?																							// NPS Toggle
-         "NPS: " + nps + " (Max " + maxNPS + ")" + (!PlayStateChangeables.botPlay ? " | " : "") : "") +								// 	NPS
-         (!PlayStateChangeables.botPlay ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 		// Score
-         (FlxG.save.data.accuracyDisplay ?																						// Accuracy Toggle
+         (!PlayStateChangeables.botPlay ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 		// Score																					// Accuracy Toggle
          " | Combo Breaks:" + PlayState.misses + 																				// 	Misses/Combo Breaks
          " | Accuracy:" + (PlayStateChangeables.botPlay ? "N/A" : HelperFunctions.truncateFloat(accuracy, 2) + " %") +  				// 	Accuracy
-         " | " + GenerateLetterRank(accuracy) : "") : ""); 																		// 	Letter Rank
+         " | " + GenerateLetterRank(accuracy) : ""); 																		// 	Letter Rank
     }
 }

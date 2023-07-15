@@ -48,7 +48,6 @@ class Note extends FlxSprite
 
 	public var rating:String = "shit";
 
-	public var modAngle:Float = 0; // The angle set by modcharts
 	public var localAngle:Float = 0; // The angle to be edited inside Note.hx
 
 	public var dataColor:Array<String> = ['purple', 'blue', 'green', 'red'];
@@ -230,7 +229,6 @@ class Note extends FlxSprite
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		angle = modAngle + localAngle;
 
 		if (!modifiedByLua)
 		{

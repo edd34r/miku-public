@@ -1,5 +1,7 @@
 package;
 
+import flixel.FlxState;
+import flixel.ui.FlxButton;
 #if windows
 import Discord.DiscordClient;
 #end
@@ -23,6 +25,20 @@ class MusicBeatState extends FlxUIState
 
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
+
+	var _backButton:FlxButton;
+
+	public function addbackButton(semState:Bool = true,?prevState:FlxState)
+	{
+		_backButton = new FlxButton(50, 25, function()
+		{
+			if (!semState)
+				FlxG.switchState(prevState); //Assim posso usar esse botão apenas como um mero sprite em situações mais complexas.
+		});
+		_backButton.loadGraphic(Paths.image('voltar_simples'));
+		_backButton.updateHitbox();
+		add(_backButton);
+	}
 
 	var _virtualpad:FlxVirtualPad;
 
@@ -76,6 +92,13 @@ class MusicBeatState extends FlxUIState
 	override function update(elapsed:Float)
 	{
 		//everyStep();
+
+		if(_backButton != null)
+			if (_backButton.pressed)
+				_backButton.setGraphicSize(Std.int(_backButton.width *0.95));
+			else
+				_backButton.setGraphicSize(Std.int(_backButton.width));
+
 		var nextStep:Int = updateCurStep();
 
 		if (nextStep >= 0)
@@ -121,16 +144,7 @@ class MusicBeatState extends FlxUIState
 			}
 		}
 
-		if (FlxG.save.data.fpsRain && skippedFrames >= 6)
-			{
-				if (currentColor >= array.length)
-					currentColor = 0;
-				(cast (Lib.current.getChildAt(0), Main)).changeFPSColor(array[currentColor]);
-				currentColor++;
-				skippedFrames = 0;
-			}
-			else
-				skippedFrames++;
+		skippedFrames++;
 
 		if ((cast (Lib.current.getChildAt(0), Main)).getFPSCap != FlxG.save.data.fpsCap && FlxG.save.data.fpsCap <= 290)
 			(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);

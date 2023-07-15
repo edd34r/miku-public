@@ -108,7 +108,7 @@ class StoryMenuState extends MusicBeatState
 
 		difficultyBar = new FlxSprite(500, 175);
 		difficultyBar.scrollFactor.set(0,0);
-		difficultyBar.loadGraphic(Paths.image('menuBG/diffs/diffbar_clean'));
+		difficultyBar.loadGraphic(Paths.image('menuBG/diffs/historia/diffbar_clean'));
 		difficultyBar.setGraphicSize(Std.int(difficultyBar.width * 1.4));
 		difficultyBar.antialiasing = FlxG.save.data.antialiasing;
 		difficultyBar.x += 200;
@@ -117,7 +117,7 @@ class StoryMenuState extends MusicBeatState
 
 		hard_button = new FlxSprite(500, 175);
 		hard_button.scrollFactor.set(0,0);
-		hard_button.loadGraphic(Paths.image('menuBG/diffs/hard_button'));
+		hard_button.loadGraphic(Paths.image('menuBG/diffs/historia/hard_button'));
 		hard_button.setGraphicSize(Std.int(hard_button.width * 1.4));
 		hard_button.antialiasing = FlxG.save.data.antialiasing;
 		hard_button.y += 45;
@@ -126,7 +126,7 @@ class StoryMenuState extends MusicBeatState
 
 		easy_button = new FlxSprite(500, 175);
 		easy_button.scrollFactor.set(0,0);
-		easy_button.loadGraphic(Paths.image('menuBG/diffs/easy_button'));
+		easy_button.loadGraphic(Paths.image('menuBG/diffs/historia/easy_button'));
 		easy_button.setGraphicSize(Std.int(easy_button.width * 1.4));
 		easy_button.antialiasing = FlxG.save.data.antialiasing;
 		easy_button.y += 45;
@@ -135,7 +135,7 @@ class StoryMenuState extends MusicBeatState
 
 		normal_button = new FlxSprite(500, 175);
 		normal_button.scrollFactor.set(0,0);
-		normal_button.loadGraphic(Paths.image('menuBG/diffs/normal_button'));
+		normal_button.loadGraphic(Paths.image('menuBG/diffs/historia/normal_button'));
 		normal_button.setGraphicSize(Std.int(normal_button.width * 1.4));
 		normal_button.antialiasing = FlxG.save.data.antialiasing;
 		normal_button.y += 45;
@@ -159,6 +159,9 @@ class StoryMenuState extends MusicBeatState
 		bars.updateHitbox();
 		bars.antialiasing = FlxG.save.data.antialiasing;
 		add(bars);
+
+		addbackButton();
+
 		add(loadIn);
         add(loadOut);
 		loadIn.animation.play('transition');
@@ -205,7 +208,7 @@ class StoryMenuState extends MusicBeatState
 			}
 		}
 
-		if (controls.BACK && !movedBack && !selectedWeek)
+		if ((controls.BACK || _backButton.justReleased) && !movedBack && !selectedWeek)
 		{
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			movedBack = true;
@@ -266,7 +269,6 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 			PlayState.storyWeek = curDifficulty;
 			PlayState.campaignScore = 0;
-			PlayState.limparCache = true;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				if (curDifficulty == 1) //Quem diria k

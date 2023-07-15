@@ -7,7 +7,6 @@ import flixel.graphics.frames.FlxAtlasFrames;
 import lime.utils.Assets;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-import openfl.display3D.textures.Texture;
 import openfl.display.BitmapData;
 import flash.media.Sound;
 import flixel.util.FlxDestroyUtil;
@@ -32,8 +31,7 @@ class Paths
 	inline public static var SOUND_EXT = #if web "mp3" #else "ogg" #end;
 	inline public static var VIDEO_EXT = "mp4";
 
-	public static var localTrackedAssets:Array<String> = [];
-	public static var currentTrackedTextures:Map<String, Texture> = [];
+	public static var localTrackedAssets:Array<String> = ['scrollMenu'];
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	public static var currentTrackedSounds:Map<String, Sound> = [];
 
@@ -61,14 +59,6 @@ class Paths
 					@:privateAccess
 					if (obj != null)
 					{
-						var isTexture:Bool = currentTrackedTextures.exists(key);
-						if (isTexture)
-						{
-							var texture = currentTrackedTextures.get(key);
-							texture.dispose();
-							texture = null;
-							currentTrackedTextures.remove(key);
-						}
 						OpenFlAssets.cache.removeBitmapData(key);
 						OpenFlAssets.cache.clearBitmapData(key);
 						OpenFlAssets.cache.clear(key);
@@ -115,7 +105,7 @@ class Paths
 			var counterSound:Int = 0;
 			for (key in currentTrackedSounds.keys())
 			{
-				if (!localTrackedAssets.contains(key) && !dumpExclusions.contains(key) && key != null)
+				if (!localTrackedAssets.contains(key) && key != null)
 				{
 					// trace('test: ' + dumpExclusions, key);
 					OpenFlAssets.cache.removeSound(key);
@@ -140,6 +130,9 @@ class Paths
 
 			// flags everything to be cleared out next unused memory clear
 			localTrackedAssets = [];
+			//Algum de vocês tem que limpar esse maldito instrumental...
+			//Na real, não sei como verificar qual está limpando, então coloquei todos os possíveis.
+			openfl.Assets.cache.clear("assets/songs");
 			openfl.Assets.cache.clear("songs");
 			#end
 
@@ -153,6 +146,8 @@ class Paths
 		}
 
 		FlxG.bitmap.dumpCache();
+		FlxG.bitmap.clearUnused();
+		FlxG.bitmap.clearCache();
 	}
 
 	static public var currentModDirectory:String = null;
@@ -251,7 +246,7 @@ class Paths
 
 	inline static public function music(key:String, ?library:String)
 	{
-		return returnSound('music', key, library);
+		return returnSound('music', key, library, true);
 	}
 
 	inline static public function voices(song:String):Any
@@ -270,7 +265,7 @@ class Paths
 		return 'songs:assets/songs/${formatToSongPath(song)}/Inst.$SOUND_EXT';
 		#else
 		var songKey:String = '${formatToSongPath(song)}/Inst';
-		var inst = returnSound('songs', songKey);
+		var inst = returnSound('songs', songKey, true);
 		return inst;
 		#end
 	}
@@ -316,18 +311,7 @@ class Paths
 				var bitmap:BitmapData = OpenFlAssets.getBitmapData(path, false);
 				var graphic:FlxGraphic = null;
 
-				if (FlxG.save.data.useGPU)
-				{
-					var texture = FlxG.stage.context3D.createTexture(bitmap.width, bitmap.height, BGRA, false, 0);
-					texture.uploadFromBitmapData(bitmap);
-					currentTrackedTextures.set(key, texture);
-					bitmap.disposeImage();
-					FlxDestroyUtil.dispose(bitmap);
-					bitmap = null;
-					graphic = FlxGraphic.fromBitmapData(BitmapData.fromTexture(texture), false, key);
-				}
-				else
-					graphic = FlxGraphic.fromBitmapData(bitmap, false, key);
+				graphic = FlxGraphic.fromBitmapData(bitmap, false, key);
 
 				graphic.persist = true;
 				trace('carregando: ' + key);
@@ -349,27 +333,25 @@ class Paths
 		var sound:Sound = null;
 		var file:String = null;
 
+		// I hate this so god damn much
+		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
+		file = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
+		if (path == 'songs')
+			gottenPath = 'songs:' + gottenPath;
+		if (currentTrackedSounds.exists(file))
 		{
-			// I hate this so god damn much
-			var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
-			file = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
-			trace('carregando: ' + key);
-			if (path == 'songs')
-				gottenPath = 'songs:' + gottenPath;
-			if (currentTrackedSounds.exists(file))
-			{
-				localTrackedAssets.push(file);
-				return currentTrackedSounds.get(file);
-			}
-			else if (OpenFlAssets.exists(gottenPath, SOUND))
-			{
-				#if lime_vorbis
-				if (stream)
-					sound = OpenFlAssets.getMusic(gottenPath);
-				else
-				#end
-				sound = OpenFlAssets.getSound(gottenPath);
-			}
+			trace('carregando: ' + file);
+			localTrackedAssets.push(file);
+			return currentTrackedSounds.get(file);
+		}
+		else if (OpenFlAssets.exists(gottenPath, SOUND))
+		{
+			#if lime_vorbis
+			if (stream)
+				sound = OpenFlAssets.getMusic(gottenPath);
+			else
+			#end
+			sound = OpenFlAssets.getSound(gottenPath);
 		}
 
 		if (sound != null)

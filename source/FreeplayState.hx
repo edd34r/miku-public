@@ -361,7 +361,6 @@ class FreeplayState extends MusicBeatState
 			trace(songs[curSelected].songName);
 
 			poop = Highscore.formatSong(songFormat, curDifficulty);
-			PlayState.limparCache = true;
 
 			
 			

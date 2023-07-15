@@ -50,9 +50,9 @@ class EndingState extends MusicBeatState
 		super.create();	
 		new FlxTimer().start(0.9, function(tmr:FlxTimer) {
 			#if desktop
-			video.playMP4(Paths.video('creditsend'), new EstadoDeTrocaReverso());
+			video.playMP4(Paths.video('creditsend'), new EstadoDeTrocaMenu());
 			#elseif mobile
-			LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'creditsend', new EstadoDeTrocaReverso()));
+			LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'creditsend', new EstadoDeTrocaMenu()));
 			#end
 		});
 

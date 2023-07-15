@@ -8,7 +8,6 @@ import flixel.input.gamepad.FlxGamepad;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import openfl.Lib;
-import Options;
 import Controls.Control;
 import flash.text.TextField;
 import flixel.FlxG;
@@ -150,6 +149,9 @@ class MikuOptions extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.antialiasing = FlxG.save.data.antialiasing;
 		add(bars);
+
+        addbackButton();
+
         loadIn.animation.play('transition');
         add(loadIn);
         add(loadOut);
@@ -166,7 +168,7 @@ class MikuOptions extends MusicBeatState
         changeSelection(1);
     if (controls.UP_P)
         changeSelection(-1);
-    if (controls.BACK){
+    if (controls.BACK || _backButton.justReleased){
         if(currentBlock == 0){
             var save:FlxSave = new FlxSave();
 		    save.bind('miku_v2', CoolUtil.getSavePath());
@@ -221,23 +223,19 @@ class MikuOptions extends MusicBeatState
             case 'HitSounds':
                 if (FlxG.save.data.hitSound > 1){
                     FlxG.save.data.hitSound -= 1;
-                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), Std.int(FlxG.save.data.hitSoundVolume/10));
+                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
                 }
             case 'Volume do Hitsound':
                 if (FlxG.save.data.hitSoundVolume > 0)
                     FlxG.save.data.hitSoundVolume -= 1;
-                FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), Std.int(FlxG.save.data.hitSoundVolume/10));
+                FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
             case 'Sons de Erro':
                 FlxG.save.data.missSounds = !FlxG.save.data.missSounds;
             case 'Notas da CPU ativas':
                 FlxG.save.data.cpuStrums = !FlxG.save.data.cpuStrums;
-            case 'GPU':
-                FlxG.save.data.useGPU = !FlxG.save.data.useGPU;
             case 'FPS Cap':
                 if (FlxG.save.data.fpsCap >= 60)
                     FlxG.save.data.fpsCap -= 10;
-            case 'Ultra gama baja':
-                FlxG.save.data.optimize = !FlxG.save.data.optimize;
             }
     }
 
@@ -267,24 +265,20 @@ class MikuOptions extends MusicBeatState
                 case 'HitSounds':
                     if (FlxG.save.data.hitSound < 4){
                         FlxG.save.data.hitSound += 1;
-                        FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), Std.int(FlxG.save.data.hitSoundVolume/10));
+                        FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
                     }
                 case 'Volume do Hitsound':
                     if (FlxG.save.data.hitSoundVolume < 10)
                         FlxG.save.data.hitSoundVolume += 1;
-                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), Std.int(FlxG.save.data.hitSoundVolume/10));
+                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
 
                 case 'Sons de Erro':
                     FlxG.save.data.missSounds = !FlxG.save.data.missSounds;
                 case 'Notas da CPU ativas':
                     FlxG.save.data.cpuStrums = !FlxG.save.data.cpuStrums;
-                case 'GPU':
-                    FlxG.save.data.useGPU = !FlxG.save.data.useGPU;
                 case 'FPS Cap':
                     if (FlxG.save.data.fpsCap <= 270)
                         FlxG.save.data.fpsCap += 10;
-                case 'Ultra gama baja':
-                    FlxG.save.data.optimize = !FlxG.save.data.optimize;
            }
     }
 
@@ -298,7 +292,7 @@ class MikuOptions extends MusicBeatState
                 #if desktop
                 openSubState(new KeyBindMenu());
                 #elseif mobile
-                if (config.getControlMode()==2)
+                if (config.getcontrolmode()==2)
                     openSubState(new KeyBindMenu());
                 else
                     lime.app.Application.current.window.alert("Lembre-se de ativar o modo de teclado em Controles Mobile antes de entrar aqui, e é claro... Ter um teclado obviamente...", "Aviso Amigo :D");
@@ -375,8 +369,6 @@ class MikuOptions extends MusicBeatState
                 return [FlxG.save.data.antialiasing, FlxG.save.data.fps, FlxG.save.data.fpsCap, FlxG.save.data.songPosition, FlxG.save.data.cpuStrums];
             case 'Sons':
                 return [FlxG.save.data.hitSound, FlxG.save.data.hitSoundVolume, FlxG.save.data.missSounds];
-            case 'Otimizacao':
-                return [FlxG.save.data.useGPU, FlxG.save.data.optimize];
         }
         return [];
     }
