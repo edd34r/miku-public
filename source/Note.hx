@@ -1,5 +1,6 @@
 package;
 
+import flixel.math.FlxRect;
 import flixel.addons.effects.FlxSkewedSprite;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -61,6 +62,15 @@ class Note extends FlxSprite
 
 	public var children:Array<Note> = [];
 
+	override function set_clipRect(rect:FlxRect):FlxRect
+		{
+			clipRect = rect;
+			if(frames != null)
+				frame = frames.frames[animation.frameIndex];
+			return rect;
+		}
+	
+
 	public function new(strumTime:Float, noteData:Int, ?prevNote:Note, ?sustainNote:Bool = false, ?inCharter:Bool = false)
 	{
 		super();
@@ -84,12 +94,6 @@ class Note extends FlxSprite
 		{
 			this.strumTime = strumTime;
 			rStrumTime = strumTime - (FlxG.save.data.offset + PlayState.songOffset);
-			#if sys
-			if (PlayState.isSM)
-			{
-				rStrumTime = Math.round(rStrumTime + Std.parseFloat(PlayState.sm.header.OFFSET));
-			}
-			#end
 		}
 
 
@@ -116,10 +120,7 @@ class Note extends FlxSprite
 
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
-			if(FlxG.save.data.antialiasing)
-				{
-					antialiasing = true;
-				}
+			antialiasing = FlxG.save.data.antialiasing;
 		}
 		else
 		{
@@ -155,11 +156,7 @@ class Note extends FlxSprite
 
 					setGraphicSize(Std.int(width * 0.7));
 					updateHitbox();
-					
-					if(FlxG.save.data.antialiasing)
-						{
-							antialiasing = true;
-						}
+					antialiasing = FlxG.save.data.antialiasing;
 			}
 		}
 
@@ -167,7 +164,7 @@ class Note extends FlxSprite
 		animation.play(dataColor[noteData] + 'Scroll');
 		originColor = noteData; // The note's origin color will be checked by its sustain notes
 
-		if (FlxG.save.data.stepMania && !isSustainNote)
+		/*if (!isSustainNote)
 		{
 			var strumCheck:Float = rStrumTime;
 
@@ -184,7 +181,7 @@ class Note extends FlxSprite
 			localAngle -= arrowAngles[col];
 			localAngle += arrowAngles[noteData];
 			originColor = col;
-		}
+		}*/
 		
 		// we make sure its downscroll and its a SUSTAIN NOTE (aka a trail, not a note)
 		// and flip it so it doesn't look weird.
@@ -197,6 +194,8 @@ class Note extends FlxSprite
 
 		if (isSustainNote && prevNote != null)
 		{
+			noteYOff = Math.round(-stepHeight + swagWidth * 0.5);
+
 			noteScore * 0.2;
 			alpha = 0.6;
 
@@ -219,13 +218,11 @@ class Note extends FlxSprite
 				prevNote.animation.play(dataColor[prevNote.originColor] + 'hold');
 				prevNote.updateHitbox();
 
-				prevNote.scale.y *= (stepHeight + 1) / prevNote.height; // + 1 so that there's no odd gaps as the notes scroll
+				prevNote.scale.y *= stepHeight / prevNote.height;
 				prevNote.updateHitbox();
-				prevNote.noteYOff = Math.round(-prevNote.offset.y);
 
-				// prevNote.setGraphicSize();
-
-				noteYOff = Math.round(-offset.y);
+				if (antialiasing)
+					prevNote.scale.y *= 1.0 + (1.0 / prevNote.frameHeight);
 			}
 		}
 	}

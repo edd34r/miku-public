@@ -69,7 +69,7 @@ class MainMenuState extends MusicBeatState
 		characters.animation.addByPrefix('credits','credits',1,true);
 	//	characters.setGraphicSize(Std.int(characters.width * 1.0));
 	//	characters.screenCenter();
-		characters.antialiasing = true;
+		characters.antialiasing = FlxG.save.data.antialiasing;
 		characters.y = -350;
 	//	var starting:FloodFill = new FloodFill(100, FlxG.height * .5 - characters.height * .5, characters, characters.width - 20, characters.height,
 	//		6, .01);
@@ -77,26 +77,11 @@ class MainMenuState extends MusicBeatState
 		add(characters);
 		characters.animation.play('storymode');
 
-	//	var mikuBitmapData:BitmapData = Assets.getBitmapData(Paths.image('menuBG/Miku')).clone();
-	//	var miku:FloodFill = new FloodFill(100, FlxG.height * .5 - mikuBitmapData.height * .5, mikuBitmapData, mikuBitmapData.width - 20, mikuBitmapData.height,
-	//		6, .01);
-	//	miku.antialiasing = true;
-	//	add(miku);
-
-	//	var miku:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('meekoo'));
-	//	miku.scrollFactor.x = 0;
-	//	miku.scrollFactor.y = 0.1;
-	//	miku.setGraphicSize(Std.int(miku.width * 1.2));
-	//	miku.updateHitbox();
-	//	miku.screenCenter();
-	//	miku.antialiasing = true;
-	//	add(miku);
-
 		var bars:FlxSprite = new FlxSprite(0).loadGraphic(Paths.image('menuBG/mainmenubars'));
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = true;
+		bars.antialiasing = FlxG.save.data.antialiasing;
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
@@ -108,7 +93,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = true;
+		magenta.antialiasing = FlxG.save.data.antialiasing;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		// magenta.scrollFactor.set();
@@ -129,7 +114,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.setGraphicSize(Std.int(menuItem.width * 0.6));
 			menuItem.updateHitbox();
 			menuItem.scrollFactor.set();
-			menuItem.antialiasing = true;
+			menuItem.antialiasing = FlxG.save.data.antialiasing;
 			menuItems.add(menuItem);
 			menuItem.x -= 200;
 			menuItem.alpha = 0;
@@ -153,11 +138,7 @@ class MainMenuState extends MusicBeatState
 
 		changeItem();
 
-		#if mobileC
-		addVirtualPad(UP_DOWN, A_B);
-		#end
-
-		
+		BSLTouchUtils.prevTouched = 0;
 
 		super.create();
 	}
@@ -176,6 +157,14 @@ class MainMenuState extends MusicBeatState
 
 		menuItems.forEach(function(menuItem:FlxSprite)
 		{
+
+			if (!selectedSomethin){
+				if (BSLTouchUtils.aperta(menuItem, menuItem.ID) == 'primeiro'){
+					changeItem(menuItem.ID, true);
+					FlxG.sound.play(Paths.sound('scrollMenu'));
+				}else if (BSLTouchUtils.aperta(menuItem, menuItem.ID) == 'segundo')
+					acceptedSomething();
+			}
 		
 
 		if (menuItem.animation.curAnim.name == 'selected')
@@ -194,44 +183,19 @@ class MainMenuState extends MusicBeatState
 
 		if (!selectedSomethin)
 		{
-			if (controls.UP_P && canSelect)
-			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
+			if (controls.UP_P && canSelect){
 				changeItem(-1);
+				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
 
 			if (controls.DOWN_P && canSelect)
 			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
 				changeItem(1);
+				FlxG.sound.play(Paths.sound('scrollMenu'));
 			}
-
 			if (controls.ACCEPT && canSelect) 
 			{
-				selectedSomethin = true;
-				FlxG.sound.play(Paths.sound('confirmMenu'));
-
-				menuItems.forEach(function(spr:FlxSprite)
-				{
-					if (curSelected != spr.ID)
-					{
-						FlxTween.tween(spr, {alpha: 0}, 0.4, {
-							ease: FlxEase.quadOut,
-							onComplete: function(twn:FlxTween)
-							{
-								spr.kill();
-							}
-						});
-					}
-					else
-					{
-						FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-						{
-							loadOut.alpha = 1;
-							loadOut.animation.play('transition');
-						});
-					}
-				});
+				acceptedSomething();
 			}
 		}
 
@@ -240,9 +204,40 @@ class MainMenuState extends MusicBeatState
 	
 	}
 
-	function changeItem(huh:Int = 0)
+	function acceptedSomething()
 	{
-		curSelected += huh;
+		selectedSomethin = true;
+		FlxG.sound.play(Paths.sound('confirmMenu'));
+
+		menuItems.forEach(function(spr:FlxSprite)
+		{
+			if (curSelected != spr.ID)
+			{
+				FlxTween.tween(spr, {alpha: 0}, 0.4, {
+					ease: FlxEase.quadOut,
+					onComplete: function(twn:FlxTween)
+					{
+						spr.kill();
+					}
+				});
+			}
+			else
+			{
+				FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
+				{
+					loadOut.alpha = 1;
+					loadOut.animation.play('transition');
+				});
+			}
+		});
+	}
+
+	function changeItem(huh:Int = 0, ?directly:Bool = false)
+	{
+		if (!directly)
+            curSelected += huh;
+        else
+            curSelected = huh;
 
 		if (curSelected >= menuItems.length)
 			curSelected = 0;

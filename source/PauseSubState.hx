@@ -23,13 +23,15 @@ class PauseSubState extends MusicBeatSubstate
 {
 	var grpMenuShit:FlxTypedGroup<Alphabet>;
 
-	var menuItems:Array<String> = ['Resume', 'Restart Song', 'Exit to menu'];
+	var menuItems:Array<String> = ['Continuar', 'Botplay', 'Reiniciar Musica', 'Voltar ao Menu'];
 	var curSelected:Int = 0;
+	var levelDifficulty:FlxText;
 
 	var pauseMusic:FlxSound;
 	var perSongOffset:FlxText;
 	
 	var offsetChanged:Bool = false;
+	var loadOut:Transition;
 
 	public function new(x:Float, y:Float)
 	{
@@ -37,7 +39,8 @@ class PauseSubState extends MusicBeatSubstate
 
 		if (PlayState.instance.useVideo)
 		{
-			menuItems.remove("Resume");
+			menuItems.remove("Continuar");
+			menuItems.remove('Botplay');
 			if (GlobalVideo.get().playing)
 				GlobalVideo.get().pause();
 		}
@@ -60,11 +63,12 @@ class PauseSubState extends MusicBeatSubstate
 		levelInfo.updateHitbox();
 		add(levelInfo);
 
-		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
-		levelDifficulty.text += CoolUtil.difficultyFromInt(PlayState.storyDifficulty).toUpperCase();
+		levelDifficulty = new FlxText(20, 15 + 32, 0, "", 32);
+		levelDifficulty.text += "Botplay";
 		levelDifficulty.scrollFactor.set();
 		levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
 		levelDifficulty.updateHitbox();
+		levelDifficulty.visible = PlayStateChangeables.botPlay;
 		add(levelDifficulty);
 
 		levelDifficulty.alpha = 0;
@@ -106,6 +110,11 @@ class PauseSubState extends MusicBeatSubstate
 		camcontrol.bgColor.alpha = 0;
 		_virtualpad.cameras = [camcontrol];
 		#end
+
+		loadOut = new Transition(0,0,'out');
+		loadOut.visible = false;
+		loadOut.scrollFactor.set(0,0);
+		add(loadOut);
 	}
 
 	override function update(elapsed:Float)
@@ -115,8 +124,10 @@ class PauseSubState extends MusicBeatSubstate
 
 		super.update(elapsed);
 
-		if (PlayState.instance.useVideo)
-			menuItems.remove('Resume');
+		if (PlayState.instance.useVideo){
+			menuItems.remove('Continuar');
+			menuItems.remove('Botplay');
+		}
 
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 
@@ -142,11 +153,6 @@ class PauseSubState extends MusicBeatSubstate
 		}
 		var songPath = 'assets/data/' + songLowercase + '/';
 
-		#if sys
-		if (PlayState.isSM && !PlayState.isStoryMode)
-			songPath = PlayState.pathToSm;
-		#end
-
 		if (controls.UP_P || upPcontroller)
 		{
 			changeSelection(-1);
@@ -170,7 +176,7 @@ class PauseSubState extends MusicBeatSubstate
 				{
 					grpMenuShit.clear();
 
-					menuItems = ['Restart Song', 'Exit to menu'];
+					menuItems = ['Reiniciar Musica', 'Voltar ao Menu'];
 
 					for (i in 0...menuItems.length)
 					{
@@ -196,7 +202,7 @@ class PauseSubState extends MusicBeatSubstate
 				{
 					grpMenuShit.clear();
 
-					menuItems = ['Restart Song', 'Exit to menu'];
+					menuItems = ['Reiniciar Musica', 'Voltar ao Menu'];
 
 					for (i in 0...menuItems.length)
 					{
@@ -220,9 +226,15 @@ class PauseSubState extends MusicBeatSubstate
 
 			switch (daSelected)
 			{
-				case "Resume":
+				case "Continuar":
 					close();
-				case "Restart Song":
+					if (PlayStateChangeables.botPlay)
+						PlayState.botplay_usado = true;
+				case "Botplay":
+					PlayStateChangeables.botPlay = !PlayStateChangeables.botPlay;
+					levelDifficulty.visible = PlayStateChangeables.botPlay;
+					PlayState.instance.botPlayState.visible = PlayStateChangeables.botPlay;
+				case "Reiniciar Musica":
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
@@ -231,7 +243,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.removedVideo = true;
 					}
 					FlxG.resetState();
-				case "Exit to menu":
+				case "Voltar ao Menu":
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
 					{
@@ -239,13 +251,6 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.instance.remove(PlayState.instance.videoSprite);
 						PlayState.instance.removedVideo = true;
 					}
-					if(PlayState.loadRep)
-					{
-						FlxG.save.data.botplay = false;
-						FlxG.save.data.scrollSpeed = 1;
-						FlxG.save.data.downscroll = false;
-					}
-					PlayState.loadRep = false;
 					#if windows
 					if (PlayState.luaModchart != null)
 					{
@@ -256,10 +261,12 @@ class PauseSubState extends MusicBeatSubstate
 					if (FlxG.save.data.fpsCap > 290)
 						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);
 					
-					if (PlayState.isStoryMode)
-						FlxG.switchState(new StoryMenuState());
-					else
-						FlxG.switchState(new FreeplayState());
+					loadOut.visible = true;
+					loadOut.animation.play('transition');
+					loadOut.animation.finishCallback = function(huh:String){
+						FlxG.switchState(new EstadoDeTrocaReverso());
+					};
+					
 			}
 		}
 

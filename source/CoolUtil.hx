@@ -24,6 +24,13 @@ class CoolUtil
 
 		return daList;
 	}
+
+	public static function getSavePath():String {
+		@:privateAccess
+		return #if (flixel < "5.0.0") 'miku_v2' #else FlxG.stage.application.meta.get('company')
+			+ '/'
+			+ FlxSave.validate(FlxG.stage.application.meta.get('file')) #end;
+	}
 	
 	public static function coolStringFile(path:String):Array<String>
 		{

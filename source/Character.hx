@@ -26,13 +26,39 @@ class Character extends FlxSprite
 		this.isPlayer = isPlayer;
 
 		var tex:FlxAtlasFrames;
-		if(FlxG.save.data.antialiasing)
-			{
-				antialiasing = true;
-			}
+		antialiasing = FlxG.save.data.antialiasing;
 
 		switch (curCharacter)
 		{
+			case 'invisibru':
+				tex = Paths.getSparrowAtlas('invisibru','shared',true);
+				frames = tex;
+				animation.addByPrefix('cheer', 'GF Cheer', 1, false);
+				animation.addByPrefix('singLEFT', 'GF left note', 1, false);
+				animation.addByPrefix('singRIGHT', 'GF Right Note', 1, false);
+				animation.addByPrefix('singUP', 'GF Up Note', 1, false);
+				animation.addByPrefix('singDOWN', 'GF Down Note', 1, false);
+				animation.addByIndices('sad', 'gf sad', [0], "", 1, false);
+				animation.addByIndices('danceLeft', 'GF Dancing Beat', [0], "", 1, false);
+				animation.addByIndices('danceRight', 'GF Dancing Beat', [0], "", 1, false);
+				animation.addByIndices('hairBlow', "GF Dancing Beat Hair blowing", [0], "", 1);
+				animation.addByIndices('hairFall', "GF Dancing Beat Hair Landing", [0], "", 1, false);
+				animation.addByPrefix('scared', 'GF FEAR', 1);
+				animation.addByPrefix('idle', 'idle', 1, false);
+				animation.addByPrefix('singUPmiss', 'idle', 1, false);
+				animation.addByPrefix('singLEFTmiss', 'idle', 1, false);
+				animation.addByPrefix('singRIGHTmiss', 'idle', 1, false);
+				animation.addByPrefix('singDOWNmiss', 'idle', 1, false);
+				animation.addByPrefix('hey', 'idle', 1, false);
+
+				animation.addByPrefix('firstDeath', 'idle', 1, false);
+				animation.addByPrefix('deathLoop', 'idle', 1, false);
+				animation.addByPrefix('deathConfirm', 'idle', 1, false);
+
+				animation.addByPrefix('scared', 'idle', 1, false);
+
+				playAnim('idle');
+
 			case 'gf':
 				// GIRLFRIEND CODE
 				tex = Paths.getSparrowAtlas('GF_assets','shared',true);
@@ -132,7 +158,7 @@ class Character extends FlxSprite
 				animation.addByIndices('danceLeft', 'GF Dancing Beat', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
 				animation.addByIndices('danceRight', 'GF Dancing Beat', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 				animation.addByIndices('sad', 'gf sad', [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], "", 24, false);
-
+				animation.addByIndices('idle', 'GF Dancing Beat', [1], "", 1, false);
 				addOffset('danceLeft', 0);
 				addOffset('danceRight', 0);
 				addOffset('sad', -2, -2);
@@ -265,11 +291,45 @@ class Character extends FlxSprite
 
 				flipX = true;
 
+			case 'bfdead':
+				var tex = Paths.getSparrowAtlas('BOYFRIEND_DEAD','shared',true);
+				frames = tex;
+
+				trace(tex.frames.length);
+
+				animation.addByPrefix('idle', 'BF dies', 1, false);
+				animation.addByPrefix('singUP', 'BF dies', 1, false);
+				animation.addByPrefix('singLEFT', 'BF dies', 1, false);
+				animation.addByPrefix('singRIGHT', 'BF dies', 1, false);
+				animation.addByPrefix('singDOWN', 'BF dies', 1, false);
+				animation.addByPrefix('singUPmiss', 'BF dies', 1, false);
+				animation.addByPrefix('singLEFTmiss', 'BF dies', 1, false);
+				animation.addByPrefix('singRIGHTmiss', 'BF dies', 1, false);
+				animation.addByPrefix('singDOWNmiss', 'BF dies', 1, false);
+				animation.addByPrefix('hey', 'BF dies', 1, false);
+
+				animation.addByPrefix('scared', 'BF idle shaking', 24);
+
+				animation.addByPrefix('firstDeath', "BF dies", 24, false);
+				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, true);
+				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
+
+				loadOffsetFile('bfdead');
+
+				flipX = true;
+
+				playAnim('idle');
+
 			case 'bf':
 				var tex = Paths.getSparrowAtlas('BOYFRIEND','shared',true);
 				frames = tex;
 
 				trace(tex.frames.length);
+
+				
+				animation.addByPrefix('firstDeath', "BF dies", 24, false);
+				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, false);
+				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
 				animation.addByPrefix('idle', 'BF idle dance', 24, false);
 				animation.addByPrefix('singUP', 'BF NOTE UP0', 24, false);
@@ -281,10 +341,6 @@ class Character extends FlxSprite
 				animation.addByPrefix('singRIGHTmiss', 'BF NOTE RIGHT MISS', 24, false);
 				animation.addByPrefix('singDOWNmiss', 'BF NOTE DOWN MISS', 24, false);
 				animation.addByPrefix('hey', 'BF HEY', 24, false);
-
-				animation.addByPrefix('firstDeath', "BF dies", 24, false);
-				animation.addByPrefix('deathLoop', "BF Dead Loop", 24, false);
-				animation.addByPrefix('deathConfirm', "BF Dead confirm", 24, false);
 
 				animation.addByPrefix('scared', 'BF idle shaking', 24);
 
@@ -432,23 +488,6 @@ class Character extends FlxSprite
 
 				antialiasing = false;
 
-			case 'spirit':
-				frames = Paths.getPackerAtlas('spirit','shared',true);
-				animation.addByPrefix('idle', "idle spirit_", 24, false);
-				animation.addByPrefix('singUP', "up_", 24, false);
-				animation.addByPrefix('singRIGHT', "right_", 24, false);
-				animation.addByPrefix('singLEFT', "left_", 24, false);
-				animation.addByPrefix('singDOWN', "spirit down_", 24, false);
-
-				loadOffsetFile(curCharacter);
-
-				setGraphicSize(Std.int(width * 6));
-				updateHitbox();
-
-				playAnim('idle');
-
-				antialiasing = false;
-
 			case 'parents-christmas':
 				frames = Paths.getSparrowAtlas('mom_dad_christmas_assets','shared',true);
 				animation.addByPrefix('idle', 'Parent Christmas Idle', 24, false);
@@ -470,6 +509,7 @@ class Character extends FlxSprite
 			case 'miku':
 				frames = Paths.getSparrowAtlas('ev_miku_assets','shared',true);
 				
+				animation.addByIndices('idle','Miku idle dance',[0], '', 1, false);
 				animation.addByIndices('danceLeft','Miku idle dance',[31,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14], '', 24, false);
 				animation.addByIndices('danceRight','Miku idle dance',[15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30], '', 24, false);
 				animation.addByPrefix('singUP', 'Miku Sing Note UP0', 24, false);

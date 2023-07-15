@@ -42,7 +42,6 @@ class OptionsMenu extends MusicBeatState
 		new OptionCategory("Appearance", [
 			new DistractionsAndEffectsOption("Toggle stage distractions that can hinder your gameplay."),
 		//	new CamZoomOption("Toggle the camera zoom in-game."),
-		//	new StepManiaOption("Sets the colors of the arrows depending on quantization instead of direction."),
 			new AccuracyOption("Display accuracy information on the info bar."),
 			new SongPositionOption("Show the song's current position as a scrolling bar."),
 		//	new NPSDisplayOption("Shows your current Notes Per Second on the info bar."),
@@ -59,7 +58,6 @@ class OptionsMenu extends MusicBeatState
 		//	new ScoreScreen("Show the score screen after the end of a song"),
 		//	new ShowInput("Display every single input on the score screen."),
 			new Optimization("No characters or backgrounds. Just a usual rhythm game layout."),
-			new GraphicLoading("On startup, cache every character. Significantly decrease load times. (HIGH MEMORY)"),
 			new BotPlay("Showcase your charts and mods with autoplay.")
 		]),
 		
@@ -131,7 +129,7 @@ class OptionsMenu extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = true;
+		bars.antialiasing = FlxG.save.data.antialiasing;
 		add(bars);
 
 	//	FlxTween.tween(versionShit,{y: FlxG.height - 18},2,{ease: FlxEase.elasticInOut});

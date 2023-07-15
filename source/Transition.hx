@@ -30,9 +30,12 @@ class Transition extends FlxSprite{
         frames = Paths.getSparrowAtlas('menuBG/transOut');
     }
 
+    setGraphicSize(Std.int(this.width*2));
+    screenCenter(XY);
+
 
     
-    antialiasing = true;
+    antialiasing = FlxG.save.data.antialiasing;
     animation.addByPrefix('transition','loading anim',24,false);
 
     }

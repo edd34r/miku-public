@@ -27450,6 +27450,7 @@
    }
   ],
   "player2": "miku",
+  "gfVersion":"gf-expo",
   "eventObjects": [
    {
     "name": "Init BPM",

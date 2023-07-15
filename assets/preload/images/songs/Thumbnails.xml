@@ -11,4 +11,7 @@
 	<SubTexture name="PoPiPo" x="1280" y="720" width="1280" height="720" pivotX="0" pivotY="0"/>
 	<SubTexture name="Random" x="2560" y="720" width="1280" height="720" pivotX="0" pivotY="0"/>
 	<SubTexture name="SIU" x="0" y="1440" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Rolling" x="1280" y="1440" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Anamanaguchi" x="2560" y="1440" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Dwelling" x="0" y="2160" width="1280" height="720" pivotX="0" pivotY="0"/>
 </TextureAtlas>

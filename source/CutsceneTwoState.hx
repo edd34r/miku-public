@@ -57,7 +57,7 @@ class CutsceneTwoState extends MusicBeatState
 	
 	public function endIt(e:FlxTimer=null){
 		trace("ENDING");
-		FlxG.switchState(new PlayState());
+		FlxG.switchState(new EstadoDeTroca());
 	}
 	
 }

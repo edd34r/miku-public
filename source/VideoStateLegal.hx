@@ -18,14 +18,30 @@ class VideoStateLegal extends MusicBeatState
 
 	var text:FlxText;
 
-	public function new(source:String, toTrans:FlxState)
+	public function new(source:String, toTrans:FlxState, ?special:Bool = false)
 	{
 		super();
 
-		text = new FlxText(0, 0, 0, "Toque para continuar", 48);
+		if (special)
+			text = new FlxText(0, 0, 0, "Isso tinha 1% de chance de aparecer\n tu é muito sortudo (ou muito azarado não sei kek)", 48);
+		else
+			text = new FlxText(0, 0, 0, "Toque para continuar", 48);
 		text.screenCenter();
 		text.alpha = 0;
 		add(text);
+
+		
+		if (source.endsWith() == 'creditsend'){
+			FlxTransitionableState.skipNextTransIn = true;
+			FlxTransitionableState.skipNextTransOut = true;
+			loadIn = new Transition(0,0,'in');
+			loadIn.animation.finishCallback = function(huh:String){
+			remove(loadIn);
+			};
+			loadIn.scrollFactor.set(0,0);
+			add(loadIn);
+			loadIn.animation.play('transition');
+		}
 
 		nextState = toTrans;
 
@@ -34,7 +50,9 @@ class VideoStateLegal extends MusicBeatState
 		WebView.onClose = onClose;
 		WebView.onURLChanging = onURLChanging;
 
-		WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
+		new FlxTimer().start(0.8, function(tmr:FlxTimer) {
+			WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
+		});
 	}
 
 	public override function update(dt:Float)

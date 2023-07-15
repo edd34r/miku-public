@@ -44,7 +44,7 @@ class KeyBindQuick extends MusicBeatState
 		bg.setGraphicSize(Std.int(bg.width * 1.18));
 		bg.updateHitbox();
 		bg.screenCenter();
-		bg.antialiasing = true;
+		bg.antialiasing = FlxG.save.data.antialiasing;
 		bg.color = 0xFF5C6CA5;
 		add(bg);
 

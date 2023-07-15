@@ -26,7 +26,9 @@ class OptionBar extends FlxSpriteGroup{
     public var optionValue:Dynamic;
     public var isSelected:Bool = false;
 
-public function new(x:Float,y:Float,_option:String)
+    var brickArray:Array<String> = ['Gameplay', 'Visual', 'Sons', 'Otimizacao', 'Mobile', 'Teclado'];
+
+    public function new(x:Float,y:Float,_option:String)
     {
     super();
     option = _option;
@@ -34,7 +36,7 @@ public function new(x:Float,y:Float,_option:String)
 
     bg = new FlxSprite(x,y);
     bg.frames = Paths.getSparrowAtlas('menuBG/options_bricks');
-    if (option == 'Change Binds'){
+    if (brickArray.contains(option)){
     bg.animation.addByPrefix('normal','keybindbrick0',24,true);
     bg.animation.addByPrefix('selected','keybindbrick select0',24,true);
     }
@@ -42,7 +44,7 @@ public function new(x:Float,y:Float,_option:String)
     bg.animation.addByPrefix('normal','settings_brick0',24,true);
     bg.animation.addByPrefix('selected','settings_brick select0',24,true);
     }
-    bg.antialiasing = true;
+    bg.antialiasing = FlxG.save.data.antialiasing;
     add(bg);
 
 
@@ -52,20 +54,20 @@ public function new(x:Float,y:Float,_option:String)
     optionText.bold = true;
     optionText.borderQuality = 1;
     optionText.text = option;
-    optionText.antialiasing = true;
+    optionText.antialiasing = FlxG.save.data.antialiasing;
     add(optionText);
 
-    optionValueText = new FlxText(0,0,0,'',40);
-    optionValueText.setPosition(optionText.x + 415, optionText.y);
-    optionValueText.setFormat(Paths.font('shit.ttf'), 38, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT);
+    optionValueText = new FlxText(0,0,180,'',40);
+    optionValueText.setPosition(460, optionText.y-3);
+    optionValueText.setFormat(Paths.font('shit.ttf'), 38, FlxColor.WHITE, CENTER, FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT);
     optionValueText.bold = true;
     optionValueText.borderQuality = 1;
-    optionValueText.antialiasing = true;
+    optionValueText.antialiasing = FlxG.save.data.antialiasing;
     add(optionValueText);
     }
 
 
-    
+
 
     override function update(elapsed:Float)
     {
@@ -77,10 +79,10 @@ public function new(x:Float,y:Float,_option:String)
         //change text
         switch (optionValueText.text){
         case 'true':
-        optionValueText.text = 'ON';
+        optionValueText.text = 'ATIVO';
         case 'false':
-        optionValueText.text = 'OFF';   
-        } 
+        optionValueText.text = 'INATIVO';   
+        }
       
         if (isSelected){
             bg.animation.play('selected');

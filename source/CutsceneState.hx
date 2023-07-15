@@ -22,6 +22,8 @@ class CutsceneState extends MusicBeatState
 
 	var zoom:Float = -1;
 
+	var loadIn:Transition;
+
 	#if desktop
 	var video:MP4Handler = new MP4Handler();
 	#end
@@ -36,17 +38,30 @@ class CutsceneState extends MusicBeatState
 	override public function create():Void 
 	{
 		trace(PlayState.storyWeek);
+		FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransOut = true;
+		loadIn = new Transition(0,0,'in');
+		loadIn.animation.finishCallback = function(huh:String){
+		remove(loadIn);
+		};
+		loadIn.scrollFactor.set(0,0);
 		super.create();	
+		new FlxTimer().start(0.8, function(tmr:FlxTimer) {
+
+		EstadoDeTroca.hasTrans = false;
 		if (PlayState.storyWeek == 0)
 			endIt();
 		else
-			FlxG.camera.fade(FlxColor.BLACK, 0.8, true);
 			if (PlayState.storyWeek == 1)
 				#if desktop
-				video.playMP4(Paths.video('loidcutscene'), new PlayState());
+				video.playMP4(Paths.video('loidcutscene'), new EstadoDeTroca());
 				#elseif mobile
-				LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'loidcutscene', new PlayState()));
+				LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'loidcutscene', new EstadoDeTroca()));
 				#end
+		});
+
+		add(loadIn);
+		loadIn.animation.play('transition');
 	}
 	
 	override public function update(elapsed:Float):Void 

@@ -2,6 +2,7 @@
  "song": {
   "sectionLengths": [],
   "player1": "bf",
+  "gfVersion":"gf-expo",
   "player2": "miku",
   "notes": [
    {

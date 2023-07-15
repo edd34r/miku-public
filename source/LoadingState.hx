@@ -1,84 +1,68 @@
-package;
-
-import lime.app.Promise;
-import lime.app.Future;
 import flixel.FlxG;
-import flixel.FlxState;
 import flixel.FlxSprite;
-import flixel.graphics.frames.FlxAtlasFrames;
+import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.math.FlxMath;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-
-import openfl.utils.Assets;
-import lime.utils.Assets as LimeAssets;
+import flixel.util.FlxColor;
+import haxe.io.Path;
+import lime.app.Future;
+import lime.app.Promise;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
-
-import haxe.io.Path;
+import lime.utils.Assets as LimeAssets;
+import openfl.utils.Assets as OpenFlAssets;
+import openfl.utils.Assets;
 
 class LoadingState extends MusicBeatState
 {
 	inline static var MIN_TIME = 1.0;
-	
+
+	public static var directory:String = 'shared';
+
 	var target:FlxState;
 	var stopMusic = false;
-	var callbacks:MultiCallback;
+	var actualdirectory:String;
+	public static var directoryreader:String;
+	public static var callbacks:MultiCallback;
+	public static var targetShit:Float = 0;
+
 	
-	var logo:FlxSprite;
-	var gfDance:FlxSprite;
-	var danceLeft = false;
-	
-	function new(target:FlxState, stopMusic:Bool)
+	function new(target:FlxState, stopMusic:Bool, actualdirectory:String)
 	{
 		super();
 		this.target = target;
 		this.stopMusic = stopMusic;
+		this.actualdirectory = actualdirectory;
 	}
 	
 	override function create()
 	{
-		logo = new FlxSprite(-150, -100);
-		logo.frames = Paths.getSparrowAtlas('logoBumpin');
-		if(FlxG.save.data.antialiasing)
-			{
-				logo.antialiasing = true;
-			}
-		logo.animation.addByPrefix('bump', 'logo bumpin', 24);
-		logo.animation.play('bump');
-		logo.updateHitbox();
-		// logoBl.screenCenter();
-		// logoBl.color = FlxColor.BLACK;
 
-		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
-		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
-		gfDance.animation.addByIndices('danceLeft', 'gfDance', [30, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], "", 24, false);
-		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
-		if(FlxG.save.data.antialiasing)
-			{
-				gfDance.antialiasing = true;
-			}
-		add(gfDance);
-		add(logo);
-		
 		initSongsManifest().onComplete
 		(
 			function (lib)
 			{
 				callbacks = new MultiCallback(onLoad);
 				var introComplete = callbacks.add("introComplete");
+				if (PlayState.SONG != null) {
 				checkLoadSong(getSongPath());
 				if (PlayState.SONG.needsVoices)
 					checkLoadSong(getVocalPath());
+			}
 				checkLibrary("shared");
-				if (PlayState.storyWeek > 0)
-					checkLibrary("week" + PlayState.storyWeek);
-				else
-					checkLibrary("tutorial");
+				if(actualdirectory != null && actualdirectory.length > 0 && actualdirectory != 'shared') {
+					checkLibrary(actualdirectory);
+				}
 				
-				var fadeTime = 0.5;
+				var fadeTime = 1.5;
 				FlxG.camera.fade(FlxG.camera.bgColor, fadeTime, true);
 				new FlxTimer().start(fadeTime + MIN_TIME, function(_) introComplete());
 			}
 		);
+		super.create();
 	}
 	
 	function checkLoadSong(path:String)
@@ -96,9 +80,10 @@ class LoadingState extends MusicBeatState
 		}
 	}
 	
-	function checkLibrary(library:String)
-	{
+	function checkLibrary(library:String) {
+		#if debug
 		trace(Assets.hasLibrary(library));
+		#end
 		if (Assets.getLibrary(library) == null)
 		{
 			@:privateAccess
@@ -110,26 +95,9 @@ class LoadingState extends MusicBeatState
 		}
 	}
 	
-	override function beatHit()
-	{
-		super.beatHit();
-		
-		logo.animation.play('bump');
-		danceLeft = !danceLeft;
-		
-		if (danceLeft)
-			gfDance.animation.play('danceRight');
-		else
-			gfDance.animation.play('danceLeft');
-	}
-	
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		#if debug
-		if (FlxG.keys.justPressed.SPACE)
-			trace('fired: ' + callbacks.getFired() + " unfired:" + callbacks.getUnfired());
-		#end
 	}
 	
 	function onLoad()
@@ -157,18 +125,26 @@ class LoadingState extends MusicBeatState
 	
 	static function getNextState(target:FlxState, stopMusic = false):FlxState
 	{
-		Paths.setCurrentLevel("week" + PlayState.storyWeek);
+		var actualdirectory:String = 'shared';
+
+		Paths.setCurrentLevel(actualdirectory);
+		#if debug
+		trace('Setting asset folder to ' + actualdirectory);
+		#end
+		directoryreader = actualdirectory;
+
 		#if NO_PRELOAD_ALL
-		var loaded = isSoundLoaded(getSongPath())
-			&& (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath()))
-			&& isLibraryLoaded("shared");
+		var loaded:Bool = false;
+		if (PlayState.SONG != null) {
+			loaded = isSoundLoaded(getSongPath()) && (!PlayState.SONG.needsVoices || isSoundLoaded(getVocalPath())) && isLibraryLoaded("shared") && isLibraryLoaded(actualdirectory);
+		}
 		
 		if (!loaded)
-			return new LoadingState(target, stopMusic);
+			return new LoadingState(target, stopMusic, actualdirectory);
 		#end
 		if (stopMusic && FlxG.sound.music != null)
 			FlxG.sound.music.stop();
-		
+			directory = actualdirectory; //Tenho minhas duvidas se isso aqui tá realmente funfando...
 		return target;
 	}
 	
@@ -307,8 +283,10 @@ class MultiCallback
 	
 	inline function log(msg):Void
 	{
+		#if debug
 		if (logId != null)
 			trace('$logId: $msg');
+			#end
 	}
 	
 	public function getFired() return fired.copy();

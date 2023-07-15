@@ -22,6 +22,8 @@ class EndingState extends MusicBeatState
 
 	var zoom:Float = -1;
 
+	var loadIn:Transition;
+
 	#if desktop
 	var video:MP4Handler = new MP4Handler();
 	#end
@@ -37,22 +39,30 @@ class EndingState extends MusicBeatState
 	{
 		trace(PlayState.storyWeek);
 		super.create();	
-		FlxG.camera.fade(FlxColor.BLACK, 0.8, true);
-		#if desktop
-		video.playMP4(Paths.video('creditsend'), new MainMenuState());
-		#elseif mobile
-		LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'creditsend', new MainMenuState()));
-		#end
+		FlxTransitionableState.skipNextTransIn = true;
+		FlxTransitionableState.skipNextTransOut = true;
+		loadIn = new Transition(0,0,'in');
+		loadIn.animation.finishCallback = function(huh:String){
+		remove(loadIn);
+		};
+		loadIn.scrollFactor.set(0,0);
+		EstadoDeTrocaReverso.hasTrans = false;
+		super.create();	
+		new FlxTimer().start(0.9, function(tmr:FlxTimer) {
+			#if desktop
+			video.playMP4(Paths.video('creditsend'), new EstadoDeTrocaReverso());
+			#elseif mobile
+			LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'creditsend', new EstadoDeTrocaReverso()));
+			#end
+		});
+
+		add(loadIn);
+		loadIn.animation.play('transition');
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
-	}
-	
-	public function endIt(e:FlxTimer=null){
-		trace("ENDING");
-		FlxG.switchState(new PlayState());
 	}
 	
 }

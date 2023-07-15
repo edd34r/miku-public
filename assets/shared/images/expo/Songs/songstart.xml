@@ -12,4 +12,7 @@
 	<SubTexture name="Secret0000" x="1280" y="1440" width="1280" height="720" pivotX="0" pivotY="0"/>
 	<SubTexture name="Tutorial0000" x="2560" y="1440" width="1280" height="720" pivotX="0" pivotY="0"/>
 	<SubTexture name="Voca0000" x="0" y="2160" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Rolling0000" x="1280" y="2160" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Anamanaguchi0000" x="2560" y="2160" width="1280" height="720" pivotX="0" pivotY="0"/>
+	<SubTexture name="Dwelling0000" x="0" y="2880" width="1280" height="720" pivotX="0" pivotY="0"/>
 </TextureAtlas>

@@ -38,15 +38,16 @@ class CutsceneThreeState extends MusicBeatState
 		trace(PlayState.storyWeek);
 		super.create();	
 		//hi im bebepanzon
+		EstadoDeTroca.hasTrans = false;
 		if (PlayState.storyWeek == 0)
 			endIt();
 		else
 			FlxG.camera.fade(FlxColor.BLACK, 0.8, true);
 			if (PlayState.storyWeek == 1)
 				#if desktop
-				video.playMP4(Paths.video('vocacutscene'), new PlayState());
+				video.playMP4(Paths.video('vocacutscene'), new EstadoDeTroca());
 				#elseif mobile
-				LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'vocacutscene', new PlayState()));
+				LoadingState.loadAndSwitchState(new VideoStateLegal('assets/videos/' + 'vocacutscene', new EstadoDeTroca()));
 				#end
 				
 	}
@@ -58,7 +59,7 @@ class CutsceneThreeState extends MusicBeatState
 	
 	public function endIt(e:FlxTimer=null){
 		trace("ENDING");
-		FlxG.switchState(new PlayState());
+		FlxG.switchState(new EstadoDeTroca());
 	}
 	
 }

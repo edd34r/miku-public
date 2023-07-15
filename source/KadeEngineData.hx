@@ -12,11 +12,17 @@ class KadeEngineData
 		if (FlxG.save.data.newInput == null)
 			FlxG.save.data.newInput = true;
 
+		if (FlxG.save.data.useGPU == null)
+			FlxG.save.data.useGPU = false;
+
 		if (FlxG.save.data.downscroll == null)
 			FlxG.save.data.downscroll = false;
 
+		if (FlxG.save.data.middlescroll == null)
+			FlxG.save.data.middlescroll = false;
+
 		if (FlxG.save.data.antialiasing == null)
-			FlxG.save.data.antialiasing = true;
+			FlxG.save.data.antialiasing = FlxG.save.data.antialiasing;
 
 		if (FlxG.save.data.missSounds == null)
 			FlxG.save.data.missSounds = true;
@@ -47,10 +53,10 @@ class KadeEngineData
 			FlxG.save.data.fpsRain = false;
 
 		if (FlxG.save.data.fpsCap == null)
-			FlxG.save.data.fpsCap = 120;
+			FlxG.save.data.fpsCap = 60;
 
 		if (FlxG.save.data.fpsCap > 285 || FlxG.save.data.fpsCap < 60)
-			FlxG.save.data.fpsCap = 120; // baby proof so you can't hard lock ur copy of kade engine
+			FlxG.save.data.fpsCap = 60; // baby proof so you can't hard lock ur copy of kade engine
 		
 		if (FlxG.save.data.scrollSpeed == null)
 			FlxG.save.data.scrollSpeed = 1;
@@ -73,9 +79,6 @@ class KadeEngineData
 		if (FlxG.save.data.distractions == null)
 			FlxG.save.data.distractions = true;
 		
-		if (FlxG.save.data.stepMania == null)
-			FlxG.save.data.stepMania = false;
-
 		if (FlxG.save.data.flashing == null)
 			FlxG.save.data.flashing = true;
 
@@ -84,6 +87,12 @@ class KadeEngineData
 		
 		if (FlxG.save.data.botplay == null)
 			FlxG.save.data.botplay = false;
+
+		if (FlxG.save.data.hitSound == null)
+			FlxG.save.data.hitSound = 0;
+
+		if (FlxG.save.data.hitSoundVolume == null)
+			FlxG.save.data.hitSoundVolume = 0;
 
 		if (FlxG.save.data.cpuStrums == null)
 			FlxG.save.data.cpuStrums = false;
@@ -105,9 +114,6 @@ class KadeEngineData
 
 		if (FlxG.save.data.optimize == null)
 			FlxG.save.data.optimize = false;
-		
-		if (FlxG.save.data.cacheImages == null)
-			FlxG.save.data.cacheImages = false;
 
 		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
 		

@@ -41,10 +41,16 @@ class FreeplayState extends MusicBeatState
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
-	var waitshit:FlxTimer = new FlxTimer();
 	var combo:String = '';
 	var songMenu:FreeplayObj;
+
+	//Buttons stuff
 	var difficultyBar:FlxSprite;
+	var hard_button:FlxSprite;
+	var easy_button:FlxSprite;
+	var normal_button:FlxSprite;
+	//End
+
 	var recordSmall:FlxSprite;
 	var thumbnail:FlxSprite;
 	//var logolmao:FlxSprite;
@@ -56,7 +62,9 @@ class FreeplayState extends MusicBeatState
 
 	override function create()
 	{
+		
 		getBPM();
+		
 		FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;
 		loadIn = new Transition(0,0,'in');
@@ -89,6 +97,9 @@ class FreeplayState extends MusicBeatState
 
 			addWeek(['Loid', 'Endurance', 'Voca', 'Endless'], 1, ['miku']);
 			addWeek(['PoPiPo', 'Aishite', 'SIU', 'Disappearance'], 2, ['miku', 'miku', 'miku', 'miku-mad']);
+			addWeek(['Rolling'], 3, ['miku']);
+			addWeek(['Anamanaguchi', 'Dwelling'], 4, ['miku', 'miku']);
+			addWeek(['Infinite'], 5, ['miku']);
 
 		// LOAD MUSIC
 
@@ -102,7 +113,7 @@ class FreeplayState extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = true;
+		bars.antialiasing = FlxG.save.data.antialiasing;
 	
 
 		var tex = Paths.getSparrowAtlas('menuBG/menus');
@@ -136,16 +147,20 @@ class FreeplayState extends MusicBeatState
 		thumbnail.animation.addByPrefix('6','Aishite',1,true);
 		thumbnail.animation.addByPrefix('7','SIU',1,true);
 		thumbnail.animation.addByPrefix('8','Disappearance',1,true);
+		thumbnail.animation.addByPrefix('9','Rolling',1,true);
+		thumbnail.animation.addByPrefix('10','Anamanaguchi',1,true); //Fiquei com preguiça de fazer uma capa de album custom pra isso. k
+		thumbnail.animation.addByPrefix('11','Dwelling',1,true);
+		thumbnail.animation.addByPrefix('12','Voca',1,true);
 		thumbnail.setGraphicSize(Std.int(thumbnail.width * 0.9));
 		thumbnail.y += 50;
 		thumbnail.x += 200;
 		thumbnail.updateHitbox();
-		thumbnail.antialiasing = true;
+		thumbnail.antialiasing = FlxG.save.data.antialiasing;
 
 
 		recordSmall = new FlxSprite(thumbnail.x + 610, thumbnail.y + 150).loadGraphic(Paths.image('menuBG/recordsmall'));
 		recordSmall.scrollFactor.set(0,0);
-		recordSmall.antialiasing = true;
+		recordSmall.antialiasing = FlxG.save.data.antialiasing;
 		recordSmall.setGraphicSize(Std.int(recordSmall.width * 0.85));
 		recordSmall.updateHitbox();
 
@@ -157,19 +172,44 @@ class FreeplayState extends MusicBeatState
 	
 		difficultyBar = new FlxSprite(FlxG.width * 0.7, 20);
 		difficultyBar.scrollFactor.set(0,0);
-		difficultyBar.frames = Paths.getSparrowAtlas('menuBG/difficultybar');
-		difficultyBar.animation.addByPrefix('easy','difficulty slider easy',1,true);
-		difficultyBar.animation.addByPrefix('normal','difficulty slider normal',1,true);
-		difficultyBar.animation.addByPrefix('hard','difficulty slider hard',1,true);
-		difficultyBar.antialiasing = true;
+		difficultyBar.loadGraphic(Paths.image('menuBG/diffs/diffbar_clean'));
+		difficultyBar.antialiasing = FlxG.save.data.antialiasing;
 		add(difficultyBar);
-		difficultyBar.animation.play('easy');
 		difficultyBar.alpha = 0;
 		difficultyBar.x += 200;
 		difficultyBar.y += 25;
 
-		FlxTween.tween(difficultyBar, {alpha: 1, x: difficultyBar.x - 300}, 0.8,{startDelay: 0.3, ease: FlxEase.smoothStepInOut});
+		hard_button = new FlxSprite(FlxG.width * 0.7, 20);
+		hard_button.scrollFactor.set(0,0);
+		hard_button.loadGraphic(Paths.image('menuBG/diffs/hard_button'));
+		hard_button.antialiasing = FlxG.save.data.antialiasing;
+		hard_button.updateHitbox();
+		hard_button.x += 232;
+		hard_button.y += 49;
+		add(hard_button);
 
+		easy_button = new FlxSprite(FlxG.width * 0.7, 20);
+		easy_button.scrollFactor.set(0,0);
+		easy_button.loadGraphic(Paths.image('menuBG/diffs/easy_button'));
+		easy_button.antialiasing = FlxG.save.data.antialiasing;
+		easy_button.updateHitbox();
+		easy_button.x -= 47;
+		easy_button.y += 49;
+		add(easy_button);
+
+		normal_button = new FlxSprite(FlxG.width * 0.7, 20);
+		normal_button.scrollFactor.set(0,0);
+		normal_button.loadGraphic(Paths.image('menuBG/diffs/normal_button'));
+		normal_button.antialiasing = FlxG.save.data.antialiasing;
+		normal_button.updateHitbox();
+		normal_button.x += 82;
+		normal_button.x +=300;
+		normal_button.alpha = 0;
+		normal_button.y += 49;
+		add(normal_button);
+
+		FlxTween.tween(difficultyBar, {alpha: 1, x: difficultyBar.x - 300}, 0.8,{startDelay: 0.3, ease: FlxEase.smoothStepInOut});
+		FlxTween.tween(normal_button, {alpha: 1, x: normal_button.x - 300}, 0.8,{startDelay: 0.3, ease: FlxEase.smoothStepInOut});
 
 		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
 	
@@ -181,10 +221,10 @@ class FreeplayState extends MusicBeatState
 		add(loadOut);
 
 		changeSelection();
-		changeDiff();
+		changeDiff(1,true);
 
 		#if mobileC
-		addVirtualPad(FULL, A_B);
+		addVirtualPad(UP_DOWN, A_B);
 		#end
 
 
@@ -214,6 +254,18 @@ class FreeplayState extends MusicBeatState
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
+
+		//Touch stuff
+		if (BSLTouchUtils.apertasimples(easy_button)){
+			changeDiff(0, true);
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}else if(BSLTouchUtils.apertasimples(normal_button)){
+			changeDiff(1, true);
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}else if(BSLTouchUtils.apertasimples(hard_button)){
+			changeDiff(2, true);
+			FlxG.sound.play(Paths.sound('scrollMenu'));
+		}
 		//using this instead of tweening it cause it bugged weirdly
 		recordSmall.angle += 1;
 
@@ -309,6 +361,7 @@ class FreeplayState extends MusicBeatState
 			trace(songs[curSelected].songName);
 
 			poop = Highscore.formatSong(songFormat, curDifficulty);
+			PlayState.limparCache = true;
 
 			
 			
@@ -325,15 +378,21 @@ class FreeplayState extends MusicBeatState
 			FlxFlicker.flicker(songArray[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker){
 				loadOut.animation.play('transition');
 				loadOut.alpha = 1;
-				loadOut.animation.finishCallback = function(huh:String){LoadingState.loadAndSwitchState(new PlayState());}
+				loadOut.animation.finishCallback = function(huh:String){
+					LoadingState.loadAndSwitchState(new EstadoDeTroca());
+				}
+				
 				
 			});
 		}
 	}
 
-	function changeDiff(change:Int = 0)
+	function changeDiff(change:Int = 0, directly:Bool = false)
 	{
-		curDifficulty += change;
+		if (!directly)
+            curDifficulty += change;
+        else
+            curDifficulty = change;
 
 		if (curDifficulty < 0)
 			curDifficulty = 2;
@@ -342,10 +401,6 @@ class FreeplayState extends MusicBeatState
 
 		// adjusting the highscore song name to be compatible (changeDiff)
 		var songHighscore = StringTools.replace(songs[curSelected].songName, " ", "-");
-		switch (songHighscore) {
-			case 'Dad-Battle': songHighscore = 'Dadbattle';
-			case 'Philly-Nice': songHighscore = 'Philly';
-		}
 		
 		#if !switch
 		intendedScore = Highscore.getScore(songHighscore, curDifficulty);
@@ -353,8 +408,19 @@ class FreeplayState extends MusicBeatState
 		combo = Highscore.getCombo(songHighscore, curDifficulty);
 		#end
 
-	//	diffText.text = CoolUtil.difficultyFromInt(curDifficulty).toUpperCase();
-		difficultyBar.animation.play(CoolUtil.difficultyFromInt(curDifficulty).toLowerCase());
+		hard_button.visible = false;
+		normal_button.visible = false;
+		easy_button.visible = false;
+
+		switch (curDifficulty)
+		{
+			case 0:
+				easy_button.visible = true;
+			case 1:
+				normal_button.visible = true;
+			case 2:
+				hard_button.visible = true;
+		}
 	}
 
 	
@@ -393,10 +459,6 @@ class FreeplayState extends MusicBeatState
 		FlxTween.tween(camFollow, {x: songArray[curSelected].getX() + 250},0.2, {ease: FlxEase.smoothStepOut});
 
 		var songHighscore = StringTools.replace(songs[curSelected].songName, " ", "-");
-		switch (songHighscore) {
-			case 'Dad-Battle': songHighscore = 'Dadbattle';
-			case 'Philly-Nice': songHighscore = 'Philly';
-		}
 
 		
 		#if !switch
@@ -404,16 +466,6 @@ class FreeplayState extends MusicBeatState
 		combo = Highscore.getCombo(songHighscore, curDifficulty);
 		// lerpScore = 0;
 		#end
-
-		#if PRELOAD_ALL
-		FlxG.sound.music.stop();
-		waitshit.cancel();
-		waitshit.start(1, function(tmr:FlxTimer) {
-		FlxG.sound.playMusic(Paths.inst(songs[curSelected].songName), 0);
-		});
-		#end
-
-	
 	}
 
 

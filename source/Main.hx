@@ -1,7 +1,10 @@
 package;
 
 import flixel.util.FlxColor;
-import flixel.graphics.FlxGraphic;
+import openfl.display.StageScaleMode;
+#if desktop
+import Discord.DiscordClient;
+#end
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
@@ -10,21 +13,14 @@ import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import openfl.display.StageScaleMode;
 import lime.app.Application;
-
-#if desktop
-import Discord.DiscordClient;
-#end
-
-using StringTools;
 
 class Main extends Sprite
 {
 	var game = {
 		width: 1280, // WINDOW width
 		height: 720, // WINDOW height
-		initialState: TitleState, // initial game state
+		initialState: TitleState, 
 		zoom: -1.0, // game state bounds
 		framerate: 60, // default framerate
 		skipSplash: true, // if the default flixel splash screen should be skipped
@@ -75,8 +71,10 @@ class Main extends Sprite
 
 	private function setupGame():Void
 	{
-		var stageWidth:Int = Lib.current.stage.stageWidth;
-		var stageHeight:Int = Lib.current.stage.stageHeight;
+		Lib.application.window.height = 720;
+		Lib.application.window.width = 1280;
+		var stageWidth:Int = Lib.application.window.width;
+		var stageHeight:Int = Lib.application.window.height;
 
 		if (game.zoom == -1.0)
 		{
@@ -89,23 +87,19 @@ class Main extends Sprite
 
 		addChild(new FlxGame(game.width, game.height, game.initialState, #if (flixel < "5.0.0") game.zoom, #end game.framerate, game.framerate, game.skipSplash, game.startFullscreen));
 
-		//#if !mobile
-		fpsVar = new FPS(10, 3, 0xFFFFFF);
+
+		fpsVar = new FPS(5, 3, 0xFFFFFF);
 		addChild(fpsVar);
 		Lib.current.stage.align = "tl";
 		Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
 		if(fpsVar != null) {
 			toggleFPS(FlxG.save.data.fps);
 		}
-		//#end
+
 
 		#if html5
 		FlxG.autoPause = false;
 		FlxG.mouse.visible = false;
-		#end
-		
-		#if CRASH_HANDLER
-		Lib.current.loaderInfo.uncaughtErrorEvents.addEventListener(UncaughtErrorEvent.UNCAUGHT_ERROR, onCrash);
 		#end
 
 		#if desktop

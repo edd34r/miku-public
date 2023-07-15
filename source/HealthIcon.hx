@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import flixel.FlxSprite;
 
 class HealthIcon extends FlxSprite
@@ -15,8 +16,12 @@ class HealthIcon extends FlxSprite
 		
 		loadGraphic(Paths.image('iconGrid'), true, 150, 150);
 
-		antialiasing = true;
+		antialiasing = FlxG.save.data.antialiasing;
 		animation.add('bf', [0, 1], 0, false, isPlayer);
+		if (!isPlayer && char == 'invisibru')
+			animation.add('invisibru', [24, 25], 0, false, isPlayer);
+		else if (char == 'invisibru')
+			animation.add('invisibru', [0, 1], 0, false, isPlayer);
 		animation.add('bf-voca', [0, 1], 0, false, isPlayer);
 		animation.add('bf-car', [0, 1], 0, false, isPlayer);
 		animation.add('bf-christmas', [0, 1], 0, false, isPlayer);

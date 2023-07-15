@@ -30,12 +30,12 @@ class GameOverSubstate extends MusicBeatSubstate
 				stageSuffix = '-pixel';
 				daBf = 'bf-pixel-dead';
 			case 'bf-voca':
-				daBf = 'bf';
+				daBf = 'bfdead';
 			case 'miku':
 				stageSuffix = '-miku';
 				daBf = 'miku';
 			default:
-				daBf = 'bf';
+				daBf = 'bfdead';
 		}
 
 		super();
@@ -51,7 +51,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		//	var mikuTex = Paths.getSparrowAtlas('expo/sadmiku');
 		//	miku.frames = mikuTex;
 		//	miku.animation.addByPrefix('sad', 'miss miku', 24, false);
-		//	miku.antialiasing = true;
+		//	miku.antialiasing = FlxG.save.data.antialiasing;
 		//	miku.animation.play('sad');
 		//	add(miku);
 
@@ -77,7 +77,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			meekoo.frames = meekooTex;
 		//	meekoo.animation.addByPrefix('happy', 'meekoohapi', 1, false);
 			meekoo.animation.addByPrefix('sad', 'meekoo', 1, false);
-			meekoo.antialiasing = true;
+			meekoo.antialiasing = FlxG.save.data.antialiasing;
 			meekoo.animation.play('sad');
 			add(meekoo);
 
@@ -142,7 +142,6 @@ class GameOverSubstate extends MusicBeatSubstate
 				FlxG.switchState(new StoryMenuState());
 			else
 				FlxG.switchState(new FreeplayState());
-			PlayState.loadRep = false;
 		}
 
 		if (bf.animation.curAnim.name == 'firstDeath' && bf.animation.curAnim.curFrame == 12)

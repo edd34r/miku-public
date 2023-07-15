@@ -22,17 +22,16 @@ class FreeplayObj extends FlxSpriteGroup
     var bg:FlxSprite;
     var songText:FlxText;
     var scoreText:FlxText;
-    var stars:Array<FlxSprite>;
     public function new(x:Float,y:Float,_song:String){
     
         super();
     song = _song;
     bg = new FlxSprite(x,y);
-    bg.antialiasing = true;
+    bg.antialiasing = FlxG.save.data.antialiasing;
     bg.frames = Paths.getSparrowAtlas('menuBG/freeplaybricks');
     bg.animation.addByPrefix('normal','freeplay brick',24,true);
     bg.animation.addByPrefix('selected','freeplaybrick select',24,true);
-    bg.animation.play('idle');
+    bg.animation.play('normal');
     bg.setGraphicSize(Std.int(bg.width * 0.8));
     bg.updateHitbox();
     add(bg);
@@ -41,7 +40,7 @@ class FreeplayObj extends FlxSpriteGroup
     songText.setPosition(bg.x + 115, bg.y + 9);
     songText.setFormat(Paths.font('funkin.ttf'), 36, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
     songText.font = 'Funkin';
-    songText.antialiasing = true;
+    songText.antialiasing = FlxG.save.data.antialiasing;
     songText.bold = true;
     songText.borderQuality = 1;
     songText.text = song;
@@ -51,7 +50,7 @@ class FreeplayObj extends FlxSpriteGroup
     scoreText.setFormat(Paths.font('funkin'), 29, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
     scoreText.setPosition(songText.x + 10, songText.y + 40);
     scoreText.font = 'Funkin';
-    scoreText.antialiasing = true;
+    scoreText.antialiasing = FlxG.save.data.antialiasing;
     scoreText.borderQuality = 1;
     add(scoreText);
 
