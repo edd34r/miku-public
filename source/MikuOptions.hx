@@ -288,16 +288,9 @@ class MikuOptions extends MusicBeatState
                 #if mobile
                 FlxG.switchState(new CustomControlsState());
                 #end
-            }else if(settings[1][curSelected+1] == 'Teclado'){
-                #if desktop
+            }else if(settings[1][curSelected+1] == 'Teclado')
                 openSubState(new KeyBindMenu());
-                #elseif mobile
-                if (config.getcontrolmode()==2)
-                    openSubState(new KeyBindMenu());
-                else
-                    lime.app.Application.current.window.alert("Lembre-se de ativar o modo de teclado em Controles Mobile antes de entrar aqui, e é claro... Ter um teclado obviamente...", "Aviso Amigo :D");
-                #end
-            }else
+            else
                 clearSelection();
         }
     }

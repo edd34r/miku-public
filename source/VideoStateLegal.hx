@@ -1,14 +1,12 @@
 package; //Furtado de um lugar secreto shhhhhhhhhhhhhhhhhhhhh
 
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.util.FlxTimer;
 #if mobile
 import extension.webview.WebView;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.FlxSubState;
 import flixel.text.FlxText;
-
 
 using StringTools;
 
@@ -20,14 +18,13 @@ class VideoStateLegal extends MusicBeatState
 	public var nextState:FlxState;
 
 	var text:FlxText;
-	var loadIn:Transition;
 
 	public function new(source:String, toTrans:FlxState, ?special:Bool = false)
 	{
 		super();
 
 		if (special)
-			text = new FlxText(0, 0, 0, "Isso tinha 5% de chance de aparecer\n tu é muito sortudo (ou muito azarado não sei kek)", 48);
+			text = new FlxText(0, 0, 0, "Isso tinha 5% de chance de aparecer\n tu é muito sortudo \n(ou muito azarado não sei kek)", 48);
 		else
 			text = new FlxText(0, 0, 0, "Toque para continuar", 48);
 		text.screenCenter();
@@ -36,14 +33,6 @@ class VideoStateLegal extends MusicBeatState
 
 			FlxTransitionableState.skipNextTransIn = true;
 			FlxTransitionableState.skipNextTransOut = true;
-			loadIn = new Transition(0,0,'in');
-			loadIn.animation.finishCallback = function(huh:String){
-				remove(loadIn);
-				WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
-			};
-			loadIn.scrollFactor.set(0,0);
-			add(loadIn);
-			loadIn.animation.play('transition');
 
 		nextState = toTrans;
 
@@ -51,6 +40,8 @@ class VideoStateLegal extends MusicBeatState
 
 		WebView.onClose = onClose;
 		WebView.onURLChanging = onURLChanging;
+
+		WebView.open(androidPath + source + '.html', false, null, ['http://exitme(.*)']);
 	}
 
 	public override function update(dt:Float)

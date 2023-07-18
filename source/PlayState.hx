@@ -1066,8 +1066,8 @@ class PlayState extends MusicBeatState
 		doof.cameras = [camHUD];
 
 	//	kadeEngineWatermark.cameras = [camHUD];
-
-		add(lyrics);
+		if(songLowercase == 'endless')
+			add(lyrics);
 
 		#if mobileC
 			mcontrols = new Mobilecontrols();
@@ -1363,7 +1363,7 @@ class PlayState extends MusicBeatState
 	function startCountdown():Void
 	{
 		#if mobileC
-		mcontrols.visible = true;
+		if (!PlayStateChangeables.botPlay) mcontrols.visible = true;
 		#end
 
 		inCutscene = false;
@@ -3273,9 +3273,6 @@ class PlayState extends MusicBeatState
 			});
 		}
 
-		if ((KeyBinds.gamepad && !FlxG.keys.justPressed.ANY))
-		{
-			// PRESSES, check for note hits
 			if (pressArray.contains(true) && generatedMusic)
 			{
 				boyfriend.holdTimer = 0;
@@ -3353,7 +3350,7 @@ class PlayState extends MusicBeatState
 						boyfriend.dance(idleToBeat);
 				}
 			}
-		}
+		
 		notes.forEachAlive(function(daNote:Note)
 		{
 			if (PlayStateChangeables.useDownscroll && daNote.y > strumLine.y || !PlayStateChangeables.useDownscroll && daNote.y < strumLine.y)
