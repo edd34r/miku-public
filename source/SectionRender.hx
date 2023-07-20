@@ -1,9 +1,7 @@
-import flixel.FlxG;
-import flixel.util.FlxColor;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import Section.SwagSection;
-import flixel.addons.display.FlxGridOverlay;
 import flixel.FlxSprite;
+import flixel.addons.display.FlxGridOverlay;
+import flixel.util.FlxColor;
 
 class SectionRender extends FlxSprite
 {

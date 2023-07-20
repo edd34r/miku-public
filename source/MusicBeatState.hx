@@ -1,17 +1,16 @@
 package;
 
-import flixel.FlxState;
 import flixel.ui.FlxButton;
-#if windows
-import Discord.DiscordClient;
-#end
-import flixel.util.FlxColor;
-import openfl.Lib;
 import Conductor.BPMChangeEvent;
 import flixel.FlxG;
+import flixel.FlxSprite;
+import flixel.FlxState;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.ui.FlxUIState;
+#if mobileC
 import flixel.input.actions.FlxActionInput;
 import ui.FlxVirtualPad;
+#end
 
 class MusicBeatState extends FlxUIState
 {
@@ -40,6 +39,7 @@ class MusicBeatState extends FlxUIState
 		add(_backButton);
 	}
 
+	#if mobileC
 	var _virtualpad:FlxVirtualPad;
 
 	var trackedinputs:Array<FlxActionInput> = [];
@@ -52,53 +52,25 @@ class MusicBeatState extends FlxUIState
 		controls.setVirtualPad(_virtualpad, DPad, Action);
 		trackedinputs = controls.trackedinputs;
 		controls.trackedinputs = [];
-
-		#if android
-		controls.addAndroidBack();
-		#end
 	}
-	
-	override function destroy() {
+
+	override function destroy()
+	{
 		controls.removeFlxInput(trackedinputs);
 
 		super.destroy();
 	}
-
+	#end
 
 	override function create()
 	{
-		TimingStruct.clearTimings();
-		(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
-
-		if (transIn != null)
-			//trace('reg ' + transIn.region);
+		CoolUtil.setFPSCap(SaveData.framerate);
 
 		super.create();
 	}
 
-
-	var array:Array<FlxColor> = [
-		FlxColor.fromRGB(148, 0, 211),
-		FlxColor.fromRGB(75, 0, 130),
-		FlxColor.fromRGB(0, 0, 255),
-		FlxColor.fromRGB(0, 255, 0),
-		FlxColor.fromRGB(255, 255, 0),
-		FlxColor.fromRGB(255, 127, 0),
-		FlxColor.fromRGB(255, 0 , 0)
-	];
-
-	var skippedFrames = 0;
-
 	override function update(elapsed:Float)
 	{
-		//everyStep();
-
-		if(_backButton != null)
-			if (_backButton.pressed)
-				_backButton.setGraphicSize(Std.int(_backButton.width *0.95));
-			else
-				_backButton.setGraphicSize(Std.int(_backButton.width));
-
 		var nextStep:Int = updateCurStep();
 
 		if (nextStep >= 0)
@@ -114,40 +86,15 @@ class MusicBeatState extends FlxUIState
 			}
 			else if (nextStep < curStep)
 			{
-				//Song reset?
+				// Song reset?
 				curStep = nextStep;
 				updateBeat();
 				stepHit();
 			}
 		}
 
-		if (Conductor.songPosition < 0)
-			curDecimalBeat = 0;
-		else
-		{
-			if (TimingStruct.AllTimings.length > 1)
-			{
-				var data = TimingStruct.getTimingAtTimestamp(Conductor.songPosition);
-
-				FlxG.watch.addQuick("Current Conductor Timing Seg", data.bpm);
-
-				Conductor.crochet = ((60 / data.bpm) * 1000);
-
-				var percent = (Conductor.songPosition - (data.startTime * 1000)) / (data.length * 1000);
-
-				curDecimalBeat = data.startBeat + (((Conductor.songPosition/1000) - data.startTime) * (data.bpm / 60));
-			}
-			else
-			{
-				curDecimalBeat = (Conductor.songPosition / 1000) * (Conductor.bpm/60);
-				Conductor.crochet = ((60 / Conductor.bpm) * 1000);
-			}
-		}
-
-		skippedFrames++;
-
-		if ((cast (Lib.current.getChildAt(0), Main)).getFPSCap != FlxG.save.data.fpsCap && FlxG.save.data.fpsCap <= 290)
-			(cast (Lib.current.getChildAt(0), Main)).setFPSCap(FlxG.save.data.fpsCap);
+		if (CoolUtil.getFPSCap() != SaveData.framerate)
+			CoolUtil.setFPSCap(SaveData.framerate);
 
 		super.update(elapsed);
 	}
@@ -157,8 +104,6 @@ class MusicBeatState extends FlxUIState
 		lastBeat = curBeat;
 		curBeat = Math.floor(curStep / 4);
 	}
-
-	public static var currentColor = 0;
 
 	private function updateCurStep():Int
 	{
@@ -184,15 +129,6 @@ class MusicBeatState extends FlxUIState
 
 	public function beatHit():Void
 	{
-		//do literally nothing dumbass
-	}
-	
-	public function fancyOpenURL(schmancy:String)
-	{
-		#if linux
-		Sys.command('/usr/bin/xdg-open', [schmancy, "&"]);
-		#else
-		FlxG.openURL(schmancy);
-		#end
+		// do literally nothing dumbass
 	}
 }

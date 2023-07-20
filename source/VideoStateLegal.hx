@@ -1,7 +1,7 @@
 package; //Furtado de um lugar secreto shhhhhhhhhhhhhhhhhhhhh
 
-import flixel.addons.transition.FlxTransitionableState;
 #if mobile
+import flixel.addons.transition.FlxTransitionableState;
 import extension.webview.WebView;
 import flixel.FlxG;
 import flixel.FlxState;
@@ -71,7 +71,7 @@ class VideoStateLegal extends MusicBeatState
 			changecount++;
 			text.alpha = 1;
 		}
-		if (url == 'http://exitme%28.%2A%29/')
+		if (url == 'http://exitme/')
 			onClose(); // drity hack lol
 		trace("WebView is about to open: " + url);
 	}

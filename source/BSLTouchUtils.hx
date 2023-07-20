@@ -1,7 +1,5 @@
 package;
 
-import flixel.FlxSprite;
-import flixel.FlxBasic;
 import flixel.FlxG;
 
 class BSLTouchUtils

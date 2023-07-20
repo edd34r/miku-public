@@ -1,4 +1,4 @@
-import flixel.FlxG;
+
 
 class TimingStruct
 {

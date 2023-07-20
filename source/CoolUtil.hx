@@ -13,6 +13,16 @@ class CoolUtil
 		return difficultyArray[difficulty];
 	}
 
+	public static function setFPSCap(cap:Int):Void
+	{
+		Main.setFPSCap(cap);
+	}
+
+	public static function getFPSCap():Int
+	{
+		return Std.int(openfl.Lib.current.stage.frameRate);
+	}
+
 	public static function coolTextFile(path:String):Array<String>
 	{
 		var daList:Array<String> = Assets.getText(path).trim().split('\n');

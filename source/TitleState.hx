@@ -1,30 +1,22 @@
 package;
 
-import flixel.util.FlxSave;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxState;
-import flixel.addons.display.FlxGridOverlay;
 import flixel.addons.transition.FlxTransitionSprite.GraphicTransTileDiamond;
 import flixel.addons.transition.FlxTransitionableState;
 import flixel.addons.transition.TransitionData;
 import flixel.graphics.FlxGraphic;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxGroup;
-import flixel.input.gamepad.FlxGamepad;
 import flixel.math.FlxPoint;
 import flixel.math.FlxRect;
-import flixel.system.FlxSound;
-import flixel.system.ui.FlxSoundTray;
-import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 import flixel.util.FlxTimer;
-import flixel.addons.display.FlxBackdrop;
-import lime.app.Application;
 import openfl.Assets;
 
+using StringTools;
 #if windows
 import Discord.DiscordClient;
 #end
@@ -35,10 +27,9 @@ import sys.FileSystem;
 #end
 
 #if cpp
-import sys.thread.Thread;
+
 #end
 
-using StringTools;
 
 class TitleState extends MusicBeatState
 {
@@ -66,68 +57,30 @@ class TitleState extends MusicBeatState
 		FlxG.android.preventDefaultKeys = [BACK];
 		#end
 
-		var save:FlxSave = new FlxSave();
-		save.bind('miku_v2', CoolUtil.getSavePath());
+		Paths.clearStoredMemory();
+		Paths.clearUnusedMemory();
 
-		@:privateAccess
-		{
-			trace("Loaded " + openfl.Assets.getLibrary("default").assetsLoaded + " assets (DEFAULT)");
-		}
+		SaveData.init();
+		CoolUtil.setFPSCap(SaveData.framerate);
+		#if !FLX_NO_GAMEPAD
+		KeyBinds.gamepad = FlxG.gamepads.lastActive != null;
+		#end
 		
 		PlayerSettings.init();
 
-		#if windows
-		DiscordClient.initialize();
-
-		Application.current.onExit.add (function (exitCode) {
-			DiscordClient.shutdown();
-		 });
-		 
-		#end
-
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
-		/*
-		#if !desktop
-		FlxG.resetGame();
-		#end 
-		 */
+		FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
 
-		 //ratomanocu pola
-		trace('hello');
+		FlxG.fixedTimestep = false;
+
+		FlxG.game.focusLostFramerate = 30;
 
 		// DEBUG BULLSHIT
 
 		super.create();
-
-		// NGio.noLogin(APIStuff.API);
-
-		#if ng
-		var ng:NGio = new NGio(APIStuff.API, APIStuff.EncKey);
-		trace('NEWGROUNDS LOL');
-		#end
-
-		FlxG.save.bind('funkin', 'ninjamuffin99');
-
-		KadeEngineData.initSave();
-
-		// this was testing things
 		
 		Highscore.load();
-
-		if (FlxG.save.data.weekUnlocked != null)
-		{
-			// FIX LATER!!!
-			// WEEK UNLOCK PROGRESSION!!
-			// StoryMenuState.weekUnlocked = FlxG.save.data.weekUnlocked;
-
-			if (StoryMenuState.weekUnlocked.length < 4)
-				StoryMenuState.weekUnlocked.insert(0, true);
-
-			// QUICK PATCH OOPS!
-			if (!StoryMenuState.weekUnlocked[0])
-				StoryMenuState.weekUnlocked[0] = true;
-		}
 
 		#if FREEPLAY
 		FlxG.switchState(new FreeplayState());
@@ -190,12 +143,12 @@ class TitleState extends MusicBeatState
 		transparency.setGraphicSize(Std.int(transparency.width * 1.4));
 		transparency.updateHitbox();
 		transparency.screenCenter();
-		transparency.antialiasing = FlxG.save.data.antialiasing;
+		transparency.antialiasing = SaveData.antialising;
 		add(transparency);
 
 		logoBl = new FlxSprite(100, 0);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');
-		logoBl.antialiasing = FlxG.save.data.antialiasing;
+		logoBl.antialiasing = SaveData.antialising;
 		logoBl.animation.addByPrefix('bump', 'logo bumpin', 24);
 		logoBl.animation.play('bump');
 		logoBl.updateHitbox();
@@ -208,7 +161,7 @@ class TitleState extends MusicBeatState
 		titleText.frames = Paths.getSparrowAtlas('title/start');
 		titleText.animation.addByPrefix('idle', "enter", 24);
 		titleText.animation.addByPrefix('press', "enter", 24);
-		titleText.antialiasing = FlxG.save.data.antialiasing;
+		titleText.antialiasing = SaveData.antialising;
 		titleText.animation.play('idle');
 		titleText.updateHitbox();
 		// titleText.screenCenter(X);
@@ -236,7 +189,7 @@ class TitleState extends MusicBeatState
 		ngSpr.setGraphicSize(Std.int(ngSpr.width * 0.8));
 		ngSpr.updateHitbox();
 		ngSpr.screenCenter(X);
-		ngSpr.antialiasing = FlxG.save.data.antialiasing;
+		ngSpr.antialiasing = SaveData.antialising;
 
 		FlxTween.tween(credTextShit, {y: credTextShit.y + 20}, 2.9, {ease: FlxEase.quadInOut, type: PINGPONG});
 
@@ -371,6 +324,8 @@ class TitleState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+
+		MikuBG.updateTR();
 	}
 
 	function createCoolText(textArray:Array<String>)

@@ -70,6 +70,7 @@
 
 	<assets path="plugins/" rename='' if="windows"/>
 	<assets path="dlls/" rename='' if="windows"/>
+	<assets path="source/vlc" rename='' if="windows"/>
 	
 	<assets path='example_mods' rename='mods' embed='false'/>
 	<assets path='art/readme.txt' rename='do NOT readme.txt' />
@@ -127,7 +128,7 @@
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
 	<!-- <haxedef name="FLX_NO_KEYBOARD" if="mobile" /> -->
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
-	<!--<haxedef name="FLX_NO_GAMEPAD" />-->
+	<haxedef name="FLX_NO_GAMEPAD" />
 
 	<!--Disable the Flixel core sound tray-->
 	<!--<haxedef name="FLX_NO_SOUND_TRAY" />-->

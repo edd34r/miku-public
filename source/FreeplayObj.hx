@@ -1,18 +1,13 @@
 package;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
-import FreeplayState.SongMetadata;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.text.FlxTypeText;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
-import flixel.input.FlxKeyManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 
 using StringTools;
+
 
 class FreeplayObj extends FlxSpriteGroup
 {
@@ -27,7 +22,7 @@ class FreeplayObj extends FlxSpriteGroup
         super();
     song = _song;
     bg = new FlxSprite(x,y);
-    bg.antialiasing = FlxG.save.data.antialiasing;
+    bg.antialiasing = SaveData.antialising;
     bg.frames = Paths.getSparrowAtlas('menuBG/freeplaybricks');
     bg.animation.addByPrefix('normal','freeplay brick',24,true);
     bg.animation.addByPrefix('selected','freeplaybrick select',24,true);
@@ -40,7 +35,7 @@ class FreeplayObj extends FlxSpriteGroup
     songText.setPosition(bg.x + 115, bg.y + 9);
     songText.setFormat(Paths.font('funkin.ttf'), 36, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
     songText.font = 'Funkin';
-    songText.antialiasing = FlxG.save.data.antialiasing;
+    songText.antialiasing = SaveData.antialising;
     songText.bold = true;
     songText.borderQuality = 1;
     songText.text = song;
@@ -50,7 +45,7 @@ class FreeplayObj extends FlxSpriteGroup
     scoreText.setFormat(Paths.font('funkin'), 29, FlxColor.WHITE, FlxTextAlign.CENTER, FlxTextBorderStyle.OUTLINE_FAST, FlxColor.BLACK);
     scoreText.setPosition(songText.x + 10, songText.y + 40);
     scoreText.font = 'Funkin';
-    scoreText.antialiasing = FlxG.save.data.antialiasing;
+    scoreText.antialiasing = SaveData.antialising;
     scoreText.borderQuality = 1;
     add(scoreText);
 

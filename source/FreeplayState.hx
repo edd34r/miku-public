@@ -1,27 +1,22 @@
 package;
 
-import flixel.input.gamepad.FlxGamepad;
-import flash.text.TextField;
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.addons.transition.FlxTransitionableState;
+import flixel.effects.FlxFlicker;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import flixel.effects.FlxFlicker;
-import flixel.addons.display.FlxBackdrop;
-import lime.utils.Assets;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
-import flixel.FlxObject;
-import flixel.util.FlxTimer;
-import flixel.addons.transition.FlxTransitionableState;
+import flixel.util.FlxColor;
+
+using StringTools;
 #if windows
 import Discord.DiscordClient;
 #end
 
-using StringTools;
 
 class FreeplayState extends MusicBeatState
 {
@@ -113,7 +108,7 @@ class FreeplayState extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = FlxG.save.data.antialiasing;
+		bars.antialiasing = SaveData.antialising;
 	
 
 		var tex = Paths.getSparrowAtlas('menuBG/menus');
@@ -155,12 +150,12 @@ class FreeplayState extends MusicBeatState
 		thumbnail.y += 50;
 		thumbnail.x += 200;
 		thumbnail.updateHitbox();
-		thumbnail.antialiasing = FlxG.save.data.antialiasing;
+		thumbnail.antialiasing = SaveData.antialising;
 
 
 		recordSmall = new FlxSprite(thumbnail.x + 610, thumbnail.y + 150).loadGraphic(Paths.image('menuBG/recordsmall'));
 		recordSmall.scrollFactor.set(0,0);
-		recordSmall.antialiasing = FlxG.save.data.antialiasing;
+		recordSmall.antialiasing = SaveData.antialising;
 		recordSmall.setGraphicSize(Std.int(recordSmall.width * 0.85));
 		recordSmall.updateHitbox();
 
@@ -173,7 +168,7 @@ class FreeplayState extends MusicBeatState
 		difficultyBar = new FlxSprite(FlxG.width * 0.7, 20);
 		difficultyBar.scrollFactor.set(0,0);
 		difficultyBar.loadGraphic(Paths.image('menuBG/diffs/diffbar_clean'));
-		difficultyBar.antialiasing = FlxG.save.data.antialiasing;
+		difficultyBar.antialiasing = SaveData.antialising;
 		add(difficultyBar);
 		difficultyBar.alpha = 0;
 		difficultyBar.x += 200;
@@ -182,8 +177,9 @@ class FreeplayState extends MusicBeatState
 		hard_button = new FlxSprite(FlxG.width * 0.7, 20);
 		hard_button.scrollFactor.set(0,0);
 		hard_button.loadGraphic(Paths.image('menuBG/diffs/hard_button'));
-		hard_button.antialiasing = FlxG.save.data.antialiasing;
+		hard_button.antialiasing = SaveData.antialising;
 		hard_button.updateHitbox();
+		hard_button.visible = false;
 		hard_button.x += 232;
 		hard_button.y += 49;
 		add(hard_button);
@@ -191,8 +187,9 @@ class FreeplayState extends MusicBeatState
 		easy_button = new FlxSprite(FlxG.width * 0.7, 20);
 		easy_button.scrollFactor.set(0,0);
 		easy_button.loadGraphic(Paths.image('menuBG/diffs/easy_button'));
-		easy_button.antialiasing = FlxG.save.data.antialiasing;
+		easy_button.antialiasing = SaveData.antialising;
 		easy_button.updateHitbox();
+		easy_button.visible = false;
 		easy_button.x -= 47;
 		easy_button.y += 49;
 		add(easy_button);
@@ -200,7 +197,7 @@ class FreeplayState extends MusicBeatState
 		normal_button = new FlxSprite(FlxG.width * 0.7, 20);
 		normal_button.scrollFactor.set(0,0);
 		normal_button.loadGraphic(Paths.image('menuBG/diffs/normal_button'));
-		normal_button.antialiasing = FlxG.save.data.antialiasing;
+		normal_button.antialiasing = SaveData.antialising;
 		normal_button.updateHitbox();
 		normal_button.x += 82;
 		normal_button.x +=300;
@@ -255,6 +252,8 @@ class FreeplayState extends MusicBeatState
 	{
 		super.update(elapsed);
 
+		MikuBG.updateTR();
+
 		//Touch stuff
 		if (BSLTouchUtils.apertasimples(easy_button)){
 			changeDiff(0, true);
@@ -302,30 +301,6 @@ class FreeplayState extends MusicBeatState
 		var upP = controls.UP_P;
 		var downP = controls.DOWN_P;
 		var accepted = controls.ACCEPT;
-
-		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
-
-		if (gamepad != null)
-		{
-			if (gamepad.justPressed.DPAD_UP)
-			{
-				changeSelection(-1);
-			
-			}
-			if (gamepad.justPressed.DPAD_DOWN)
-			{
-				changeSelection(1);
-			
-			}
-			if (gamepad.justPressed.DPAD_LEFT)
-			{
-				changeDiff(-1);
-			}
-			if (gamepad.justPressed.DPAD_RIGHT)
-			{
-				changeDiff(1);
-			}
-		}
 
 		if (upP)
 		{
@@ -391,7 +366,7 @@ class FreeplayState extends MusicBeatState
 		if (!directly)
             curDifficulty += change;
         else
-            curDifficulty = change;
+			curDifficulty = change;
 
 		if (curDifficulty < 0)
 			curDifficulty = 2;

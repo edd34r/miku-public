@@ -1,12 +1,10 @@
-import flixel.FlxG;
+
 
 class Ratings
 {
     public static function GenerateLetterRank(accuracy:Float) // generate a letter ranking
     {
         var ranking:String = "N/A";
-		if(FlxG.save.data.botplay)
-			ranking = "BotPlay";
 
         if (PlayState.misses == 0 && PlayState.bads == 0 && PlayState.shits == 0 && PlayState.goods == 0) // Marvelous (SICK) Full Combo
             ranking = "(MFC)";
@@ -86,8 +84,6 @@ class Ratings
 
         if (accuracy == 0)
             ranking = "N/A";
-		else if(FlxG.save.data.botplay)
-			ranking = "BotPlay";
 
         return ranking;
     }
@@ -99,17 +95,6 @@ class Ratings
 
         if (customSafeZone != null)
             customTimeScale = customSafeZone / 166;
-
-        // trace(customTimeScale + ' vs ' + Conductor.timeScale);
-
-        // I HATE THIS IF CONDITION
-        // IF LEMON SEES THIS I'M SORRY :(
-
-        // trace('Hit Info\nDifference: ' + noteDiff + '\nZone: ' + Conductor.safeZoneOffset * 1.5 + "\nTS: " + customTimeScale + "\nLate: " + 155 * customTimeScale);
-
-        if (FlxG.save.data.botplay)
-            return "sick"; // FUNNY
-	
 
         var rating = checkRating(noteDiff,customTimeScale);
 
@@ -140,9 +125,9 @@ class Ratings
     public static function CalculateRanking(score:Int,scoreDef:Int,nps:Int,maxNPS:Int,accuracy:Float):String
     {
         return
-         (!PlayStateChangeables.botPlay ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 		// Score																					// Accuracy Toggle
-         " | Combo Breaks:" + PlayState.misses + 																				// 	Misses/Combo Breaks
-         " | Accuracy:" + (PlayStateChangeables.botPlay ? "N/A" : HelperFunctions.truncateFloat(accuracy, 2) + " %") +  				// 	Accuracy
-         " | " + GenerateLetterRank(accuracy) : ""); 																		// 	Letter Rank
+         (!PlayStateChangeables.botPlay ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 	    	// Score																					// Accuracy Toggle
+         " | Combo Breaks:" + PlayState.misses + 																				            // 	Misses/Combo Breaks
+         " | Accuracy:" + HelperFunctions.truncateFloat(accuracy, 2) + " %" +                                                               // 	Accuracy
+         " | " + GenerateLetterRank(accuracy) : ""); 																		                // 	Letter Rank
     }
 }

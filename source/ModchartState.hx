@@ -382,7 +382,7 @@ class ModchartState
 				setVar("bpm", Conductor.bpm);
 				setVar("scrollspeed", FlxG.save.data.scrollSpeed != 1 ? FlxG.save.data.scrollSpeed : PlayState.SONG.speed);
 				setVar("fpsCap", FlxG.save.data.fpsCap);
-				setVar("downscroll", FlxG.save.data.downscroll);
+				setVar("downscroll", SaveData.downscroll);
 	
 				setVar("curStep", 0);
 				setVar("curBeat", 0);

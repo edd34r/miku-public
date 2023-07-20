@@ -1,29 +1,23 @@
 package;
 
-import flixel.FlxG;
-
 using StringTools;
 class Highscore
 {
 	#if (haxe >= "4.0.0")
 	public static var songScores:Map<String, Int> = new Map();
 	public static var songCombos:Map<String, String> = new Map();
+	public static var songAccuracies:Map<String, Float> = new Map();
 	#else
 	public static var songScores:Map<String, Int> = new Map<String, Int>();
 	public static var songCombos:Map<String, String> = new Map<String, String>();
+	public static var songAccuracies:Map<String, Float> = new Map<String, Float>();
 	#end
-
 
 	public static function saveScore(song:String, score:Int = 0, ?diff:Int = 0):Void
 	{
 		var daSong:String = formatSong(song, diff);
 
-
-		#if (!switch && newgrounds)
-		NGio.postScore(score, song);
-		#end
-
-		if(!FlxG.save.data.botplay)
+		if (!PlayStateChangeables.botPlay)
 		{
 			if (songScores.exists(daSong))
 			{
@@ -32,7 +26,9 @@ class Highscore
 			}
 			else
 				setScore(daSong, score);
-		}else trace('BotPlay detected. Score saving is disabled.');
+		}
+		else
+			trace('Botplay/Practice or Random Mode detected, score saving is disabled.');
 	}
 
 	public static function saveCombo(song:String, combo:String, ?diff:Int = 0):Void
@@ -40,7 +36,7 @@ class Highscore
 		var daSong:String = formatSong(song, diff);
 		var finalCombo:String = combo.split(')')[0].replace('(', '');
 
-		if(!FlxG.save.data.botplay)
+		if (!PlayStateChangeables.botPlay)
 		{
 			if (songCombos.exists(daSong))
 			{
@@ -54,12 +50,7 @@ class Highscore
 
 	public static function saveWeekScore(week:Int = 1, score:Int = 0, ?diff:Int = 0):Void
 	{
-
-		#if (!switch && newgrounds)
-		NGio.postScore(score, "Week " + week);
-		#end
-
-		if(!FlxG.save.data.botplay)
+		if (!PlayStateChangeables.botPlay)
 		{
 			var daWeek:String = formatSong('week' + week, diff);
 
@@ -70,31 +61,43 @@ class Highscore
 			}
 			else
 				setScore(daWeek, score);
-		}else trace('BotPlay detected. Score saving is disabled.');
+		}
 	}
 
 	/**
-	 * YOU SHOULD FORMAT SONG WITH formatSong() BEFORE TOSSING IN SONG VARIABLE
+	 * YOU SHOULD FORMAT SONG WITH formatSongSave() BEFORE TOSSING IN SONG VARIABLE
 	 */
 	static function setScore(song:String, score:Int):Void
 	{
 		// Reminder that I don't need to format this song, it should come formatted!
 		songScores.set(song, score);
-		FlxG.save.data.songScores = songScores;
-		FlxG.save.flush();
+		SaveData.songScores = songScores;
+		SaveData.save();
 	}
 
 	static function setCombo(song:String, combo:String):Void
 	{
 		// Reminder that I don't need to format this song, it should come formatted!
 		songCombos.set(song, combo);
-		FlxG.save.data.songCombos = songCombos;
-		FlxG.save.flush();
+		SaveData.songCombos = songCombos;
+		SaveData.save();
 	}
 
 	public static function formatSong(song:String, diff:Int):String
 	{
-		var daSong:String = song;
+		var daSong:String = song.toLowerCase();
+
+		if (diff == 0)
+			daSong += '-easy';
+		else if (diff == 2)
+			daSong += '-hard';
+
+		return daSong;
+	}
+
+	public static function formatSongSave(song:String, diff:Int):String
+	{
+		var daSong:String = song.toLowerCase();
 
 		if (diff == 0)
 			daSong += '-easy';
@@ -131,29 +134,26 @@ class Highscore
 
 	public static function getCombo(song:String, diff:Int):String
 	{
-		if (!songCombos.exists(formatSong(song, diff)))
-			setCombo(formatSong(song, diff), '');
+		if (!songCombos.exists(formatSongSave(song, diff)))
+			setCombo(formatSongSave(song, diff), '');
 
-		return songCombos.get(formatSong(song, diff));
+		return songCombos.get(formatSongSave(song, diff));
 	}
 
 	public static function getWeekScore(week:Int, diff:Int):Int
 	{
-		if (!songScores.exists(formatSong('week' + week, diff)))
-			setScore(formatSong('week' + week, diff), 0);
+		if (!songScores.exists(formatSongSave('week' + week, diff)))
+			setScore(formatSongSave('week' + week, diff), 0);
 
-		return songScores.get(formatSong('week' + week, diff));
+		return songScores.get(formatSongSave('week' + week, diff));
 	}
 
 	public static function load():Void
 	{
-		if (FlxG.save.data.songScores != null)
-		{
-			songScores = FlxG.save.data.songScores;
-		}
-		if (FlxG.save.data.songCombos != null)
-		{
-			songCombos = FlxG.save.data.songCombos;
-		}
+		if (SaveData.songScores != null)
+			songScores = SaveData.songScores;
+
+		if (SaveData.songCombos != null)
+			songCombos = SaveData.songCombos;
 	}
 }

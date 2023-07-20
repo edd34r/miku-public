@@ -1,24 +1,16 @@
 package;
 
-import flixel.util.FlxSave;
-import flixel.ui.FlxButton;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.text.FlxTypeText;
-import flixel.input.gamepad.FlxGamepad;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import openfl.Lib;
-import Controls.Control;
-import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.display.FlxGridOverlay;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
-import flixel.math.FlxMath;
+import flixel.addons.text.FlxTypeText;
+import flixel.addons.transition.FlxTransitionableState;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
-import lime.utils.Assets;
+import flixel.util.FlxSave;
+import openfl.Lib;
 
 class MikuOptions extends MusicBeatState
 {
@@ -30,11 +22,10 @@ class MikuOptions extends MusicBeatState
 
     var leftButton:FlxButton;
     var rightButton:FlxButton;
-    var config:Config;
 
     var settings:Array<Dynamic> = [
         ['main', 'Gameplay', 'Visual', 'Sons'/*, 'Otimizacao'*/#if mobile , 'Controles Mobile' #end],
-        ['Gameplay', 'Downscroll', 'Middlescroll', 'Offset', 'Botplay', 'Teclado'],
+        ['Gameplay', 'Downscroll', 'Middlescroll', 'ScrollSpeed', 'Botplay', 'Teclado'],
         ['Visual', 'Antialiasing', 'FPS Visivel', 'FPS Cap', 'Tempo de Musica', 'Notas da CPU ativas'],
         ['Sons', 'HitSounds', 'Volume do Hitsound', 'Sons de Erro'],
         //['Otimizacao', 'GPU', 'Ultra gama baja']
@@ -51,7 +42,7 @@ class MikuOptions extends MusicBeatState
         ['Gameplay',
             'Faça as setas ficarem na parte de baixo da tela',
             'Centralize as setas e elimine as do oponente (pode fazer o FPS dependendo do caso).',
-            'Altere e sincronize o tempo em que as notas vem até você com a música (útil pra quem joga com fone de ouvido sem fio).',
+            'Altere a velocidade das setas de todas as músicas para um mesmo padrão \n (O limite vai de 1 até Whitty corrupted ballistic 8.0).',
             'Auto explicativo eu acho... (Mas você ainda pode mudar isso lá no menu de pause se quiser)\n esses caras da psych viu...',
             'Caso você esteja jogando no teclado, poderá customizar o seu input.'
         ],
@@ -82,9 +73,6 @@ class MikuOptions extends MusicBeatState
     var logo:FlxSprite;
     override function create()
     {
-
-        //init config
-		config = new Config();
 
         FlxTransitionableState.skipNextTransIn = true;
 		FlxTransitionableState.skipNextTransOut = true;
@@ -131,23 +119,23 @@ class MikuOptions extends MusicBeatState
         logo.animation.addByPrefix('bump','logo bumpin',24,true);
         logo.setGraphicSize(Std.int(logo.width * 0.65));
         logo.updateHitbox();
-        logo.antialiasing = FlxG.save.data.antialiasing;
+        logo.antialiasing = SaveData.antialising;
         logo.animation.play('bump');
         add(logo);
 
         infoBox = new FlxSprite(750,439).loadGraphic(Paths.image('menuBG/textbox'));
-        infoBox.antialiasing = FlxG.save.data.antialiasing;
+        infoBox.antialiasing = SaveData.antialising;
         add(infoBox);
 
         coolText = new FlxTypeText(infoBox.x + 24, infoBox.y + 20, Std.int(infoBox.width),'',30);
         coolText.setFormat(Paths.font('shit.ttf'), 25, FlxColor.fromRGB(65, 77, 77), FlxTextAlign.LEFT, FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT);
-        coolText.antialiasing = FlxG.save.data.antialiasing;
+        coolText.antialiasing = SaveData.antialising;
         add(coolText);
         
 
         bars = new FlxSprite(0,0).loadGraphic(Paths.image('menuBG/settingsbars'));
 		bars.scrollFactor.set();
-		bars.antialiasing = FlxG.save.data.antialiasing;
+		bars.antialiasing = SaveData.antialising;
 		add(bars);
 
         addbackButton();
@@ -162,6 +150,8 @@ class MikuOptions extends MusicBeatState
     override function update(elapsed:Float){
 
     super.update(elapsed);
+
+    MikuBG.updateTR();
 
 
     if (controls.DOWN_P)
@@ -181,6 +171,8 @@ class MikuOptions extends MusicBeatState
             
         }else
             clearSelection(true);
+    
+            SaveData.save();
     }
 
     if (currentBlock != 0 && canUpdate)
@@ -202,40 +194,44 @@ class MikuOptions extends MusicBeatState
         switch settings[currentBlock][curSelected+1]
             {
             case 'Downscroll':
-                FlxG.save.data.downscroll = !FlxG.save.data.downscroll;
+                SaveData.downscroll = !SaveData.downscroll;
             case 'Middlescroll':
-                FlxG.save.data.middlescroll = !FlxG.save.data.middlescroll;
+                SaveData.middlescroll = !SaveData.middlescroll;
             case 'Offset':
-                if (FlxG.save.data.offset > 0)
-                    FlxG.save.data.offset -= 1;
+                if (SaveData.offset > 0)
+                    SaveData.offset -= 1;
+            case 'ScrollSpeed':
+                if (SaveData.scrollSpeed > 1)
+                    SaveData.scrollSpeed -= 0.1;
             case 'Botplay':
-                FlxG.save.data.botplay = !FlxG.save.data.botplay;
+                SaveData.botplay = !SaveData.botplay;
             case 'Antialiasing':
-                FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
-                logo.antialiasing = FlxG.save.data.antialiasing;
-                infoBox.antialiasing = FlxG.save.data.antialiasing;
-                bars.antialiasing = FlxG.save.data.antialiasing;
+                SaveData.antialising = !SaveData.antialising;
+                logo.antialiasing = SaveData.antialising;
+                infoBox.antialiasing = SaveData.antialising;
+                bars.antialiasing = SaveData.antialising;
             case 'FPS Visivel':
-                FlxG.save.data.fps = !FlxG.save.data.fps;
-                (cast (Lib.current.getChildAt(0), Main)).toggleFPS(FlxG.save.data.fps);
+                SaveData.showFPS = !SaveData.showFPS;
+		        Main.fpsVar.visible = SaveData.showFPS;
             case 'Tempo de Musica':
-                FlxG.save.data.songPosition = !FlxG.save.data.songPosition;
+                SaveData.songPosition = !SaveData.songPosition;
             case 'HitSounds':
-                if (FlxG.save.data.hitSound > 1){
-                    FlxG.save.data.hitSound -= 1;
-                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
+                if (SaveData.hitSound > 1){
+                    SaveData.hitSound -= 1;
+                    FlxG.sound.play(Paths.sound('osu/'+Std.string(SaveData.hitSound), 'preload'), SaveData.hitSoundVolume/10);
                 }
             case 'Volume do Hitsound':
-                if (FlxG.save.data.hitSoundVolume > 0)
-                    FlxG.save.data.hitSoundVolume -= 1;
-                FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
+                if (SaveData.hitSoundVolume > 0)
+                    SaveData.hitSoundVolume -= 1;
+                FlxG.sound.play(Paths.sound('osu/'+Std.string(SaveData.hitSound), 'preload'), SaveData.hitSoundVolume/10);
             case 'Sons de Erro':
-                FlxG.save.data.missSounds = !FlxG.save.data.missSounds;
+                SaveData.missSounds = !SaveData.missSounds;
             case 'Notas da CPU ativas':
-                FlxG.save.data.cpuStrums = !FlxG.save.data.cpuStrums;
+                SaveData.cpuStrums = !SaveData.cpuStrums;
             case 'FPS Cap':
-                if (FlxG.save.data.fpsCap >= 60)
-                    FlxG.save.data.fpsCap -= 10;
+                if (SaveData.framerate > 30)
+                    SaveData.framerate -= 10;
+                CoolUtil.setFPSCap(SaveData.framerate);
             }
     }
 
@@ -244,41 +240,45 @@ class MikuOptions extends MusicBeatState
         switch settings[currentBlock][curSelected+1]
             {
                 case 'Downscroll':
-                    FlxG.save.data.downscroll = !FlxG.save.data.downscroll;
+                    SaveData.downscroll = !SaveData.downscroll;
                 case 'Middlescroll':
-                    FlxG.save.data.middlescroll = !FlxG.save.data.middlescroll;
+                    SaveData.middlescroll = !SaveData.middlescroll;
                 case 'Offset':
-                    if (FlxG.save.data.offset < 20)
-                        FlxG.save.data.offset += 1;
+                    if (SaveData.offset < 20)
+                        SaveData.offset += 1;
+                case 'ScrollSpeed':
+                if (SaveData.scrollSpeed < 8)
+                    SaveData.scrollSpeed += 0.1;
                 case 'Botplay':
-                    FlxG.save.data.botplay = !FlxG.save.data.botplay;
+                    SaveData.botplay = !SaveData.botplay;
                 case 'Antialiasing':
-                    FlxG.save.data.antialiasing = !FlxG.save.data.antialiasing;
-                    logo.antialiasing = FlxG.save.data.antialiasing;
-                    infoBox.antialiasing = FlxG.save.data.antialiasing;
-                    bars.antialiasing = FlxG.save.data.antialiasing;
+                    SaveData.antialising = !SaveData.antialising;
+                    logo.antialiasing = SaveData.antialising;
+                    infoBox.antialiasing = SaveData.antialising;
+                    bars.antialiasing = SaveData.antialising;
                 case 'FPS Visivel':
-                    FlxG.save.data.fps = !FlxG.save.data.fps;
-                    (cast (Lib.current.getChildAt(0), Main)).toggleFPS(FlxG.save.data.fps);
+                    SaveData.showFPS = !SaveData.showFPS;
+		            Main.fpsVar.visible = SaveData.showFPS;
                 case 'Tempo de Musica':
-                    FlxG.save.data.songPosition = !FlxG.save.data.songPosition;
+                    SaveData.songPosition = !SaveData.songPosition;
                 case 'HitSounds':
-                    if (FlxG.save.data.hitSound < 4){
-                        FlxG.save.data.hitSound += 1;
-                        FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
+                    if (SaveData.hitSound < 4){
+                        SaveData.hitSound += 1;
+                        FlxG.sound.play(Paths.sound('osu/'+Std.string(SaveData.hitSound), 'preload'), SaveData.hitSoundVolume/10);
                     }
                 case 'Volume do Hitsound':
-                    if (FlxG.save.data.hitSoundVolume < 10)
-                        FlxG.save.data.hitSoundVolume += 1;
-                    FlxG.sound.play(Paths.sound('osu/'+Std.string(FlxG.save.data.hitSound), 'preload'), FlxG.save.data.hitSoundVolume/10);
+                    if (SaveData.hitSoundVolume < 10)
+                        SaveData.hitSoundVolume += 1;
+                    FlxG.sound.play(Paths.sound('osu/'+Std.string(SaveData.hitSound), 'preload'), SaveData.hitSoundVolume/10);
 
                 case 'Sons de Erro':
-                    FlxG.save.data.missSounds = !FlxG.save.data.missSounds;
+                    SaveData.missSounds = !SaveData.missSounds;
                 case 'Notas da CPU ativas':
-                    FlxG.save.data.cpuStrums = !FlxG.save.data.cpuStrums;
+                    SaveData.cpuStrums = !SaveData.cpuStrums;
                 case 'FPS Cap':
-                    if (FlxG.save.data.fpsCap <= 270)
-                        FlxG.save.data.fpsCap += 10;
+                    if (SaveData.framerate < 120)
+                        SaveData.framerate += 10;
+                    CoolUtil.setFPSCap(SaveData.framerate);
            }
     }
 
@@ -292,6 +292,7 @@ class MikuOptions extends MusicBeatState
                 openSubState(new KeyBindMenu());
             else
                 clearSelection();
+            SaveData.save();
         }
     }
 
@@ -357,11 +358,11 @@ class MikuOptions extends MusicBeatState
         switch(curBlock)
         {
             case 'Gameplay':
-                return [FlxG.save.data.downscroll, FlxG.save.data.middlescroll, FlxG.save.data.offset, FlxG.save.data.botplay];
+                return [SaveData.downscroll, SaveData.middlescroll, SaveData.scrollSpeed, SaveData.botplay];
             case 'Visual':
-                return [FlxG.save.data.antialiasing, FlxG.save.data.fps, FlxG.save.data.fpsCap, FlxG.save.data.songPosition, FlxG.save.data.cpuStrums];
+                return [SaveData.antialising, SaveData.showFPS, SaveData.framerate, SaveData.songPosition, SaveData.cpuStrums];
             case 'Sons':
-                return [FlxG.save.data.hitSound, FlxG.save.data.hitSoundVolume, FlxG.save.data.missSounds];
+                return [SaveData.hitSound, SaveData.hitSoundVolume, SaveData.missSounds];
         }
         return [];
     }

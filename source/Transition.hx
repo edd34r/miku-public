@@ -1,21 +1,6 @@
 package;
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.addons.transition.FlxTransitionSprite;
-import flixel.effects.FlxFlicker;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.text.FlxText;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
-import flixel.addons.display.FlxBackdrop;
-import lime.app.Application;
-import flash.display.BitmapData;
-import openfl.Assets;
-import flixel.FlxState;
 
 
 class Transition extends FlxSprite{
@@ -35,7 +20,7 @@ class Transition extends FlxSprite{
 
 
     
-    antialiasing = FlxG.save.data.antialiasing;
+    antialiasing = SaveData.antialising;
     animation.addByPrefix('transition','loading anim',24,false);
 
     }

@@ -1,8 +1,7 @@
 package;
 
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.transition.FlxTransitionableState;
 
 class EstadoDeTroca extends MusicBeatState
 { // Obviamente eu poderia fazer algo mais geral, mas considerando que o problema era só aqui, não havia muito pra eu me preocupar na real

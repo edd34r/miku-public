@@ -1,6 +1,5 @@
 package;
 
-import flixel.input.gamepad.FlxGamepad;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
@@ -102,7 +101,7 @@ class StoryMenuState extends MusicBeatState
 		var circle:FlxSprite = new FlxSprite(-750, -250).loadGraphic(Paths.image('menuBG/record'));
 		circle.setGraphicSize(Std.int(circle.width * 1.25));
 		circle.updateHitbox();
-		circle.antialiasing = FlxG.save.data.antialiasing;
+		circle.antialiasing = SaveData.antialising;
 		add(circle);
 		FlxTween.angle(circle,circle.angle,360,20,{type:LOOPING});
 
@@ -110,7 +109,7 @@ class StoryMenuState extends MusicBeatState
 		difficultyBar.scrollFactor.set(0,0);
 		difficultyBar.loadGraphic(Paths.image('menuBG/diffs/historia/diffbar_clean'));
 		difficultyBar.setGraphicSize(Std.int(difficultyBar.width * 1.4));
-		difficultyBar.antialiasing = FlxG.save.data.antialiasing;
+		difficultyBar.antialiasing = SaveData.antialising;
 		difficultyBar.x += 200;
 		difficultyBar.y += 25;
 		add(difficultyBar);
@@ -119,9 +118,10 @@ class StoryMenuState extends MusicBeatState
 		hard_button.scrollFactor.set(0,0);
 		hard_button.loadGraphic(Paths.image('menuBG/diffs/historia/hard_button'));
 		hard_button.setGraphicSize(Std.int(hard_button.width * 1.4));
-		hard_button.antialiasing = FlxG.save.data.antialiasing;
-		hard_button.y += 45;
-		hard_button.x += 576;
+		hard_button.antialiasing = SaveData.antialising;
+		hard_button.y += 36;
+		hard_button.visible = false;
+		hard_button.x += 553;
 		hard_button.updateHitbox();
 		add(hard_button);
 
@@ -129,9 +129,10 @@ class StoryMenuState extends MusicBeatState
 		easy_button.scrollFactor.set(0,0);
 		easy_button.loadGraphic(Paths.image('menuBG/diffs/historia/easy_button'));
 		easy_button.setGraphicSize(Std.int(easy_button.width * 1.4));
-		easy_button.antialiasing = FlxG.save.data.antialiasing;
-		easy_button.y += 45;
-		easy_button.x += 181;
+		easy_button.antialiasing = SaveData.antialising;
+		easy_button.y += 36;
+		easy_button.x += 158;
+		easy_button.visible = false;
 		easy_button.updateHitbox();
 		add(easy_button);
 
@@ -139,9 +140,9 @@ class StoryMenuState extends MusicBeatState
 		normal_button.scrollFactor.set(0,0);
 		normal_button.loadGraphic(Paths.image('menuBG/diffs/historia/normal_button'));
 		normal_button.setGraphicSize(Std.int(normal_button.width * 1.4));
-		normal_button.antialiasing = FlxG.save.data.antialiasing;
-		normal_button.y += 45;
-		normal_button.x += 369;
+		normal_button.antialiasing = SaveData.antialising;
+		normal_button.y += 36;
+		normal_button.x += 340;
 		normal_button.updateHitbox();
 		add(normal_button);
 
@@ -151,7 +152,7 @@ class StoryMenuState extends MusicBeatState
 		titleText.frames = Paths.getSparrowAtlas('menuBG/startbutton');
 		titleText.animation.addByPrefix('idle', "startbutton", 24);
 		titleText.animation.addByPrefix('press', "startbutton", 24, false);
-		titleText.antialiasing = FlxG.save.data.antialiasing;
+		titleText.antialiasing = SaveData.antialising;
 		titleText.animation.play('idle');
 		titleText.setGraphicSize(Std.int(titleText.width * 0.65));
 		add(titleText);
@@ -160,7 +161,7 @@ class StoryMenuState extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = FlxG.save.data.antialiasing;
+		bars.antialiasing = SaveData.antialising;
 		add(bars);
 
 		addbackButton();
@@ -184,20 +185,6 @@ class StoryMenuState extends MusicBeatState
 		{
 			if (!selectedWeek)
 			{
-				var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
-
-				if (gamepad != null)
-				{
-
-					if (gamepad.justPressed.DPAD_RIGHT)
-					{
-						changeDifficulty(1);
-					}
-					if (gamepad.justPressed.DPAD_LEFT)
-					{
-						changeDifficulty(-1);
-					}
-				}
 
 				if (controls.RIGHT_P)
 					changeDifficulty(1);
@@ -235,6 +222,8 @@ class StoryMenuState extends MusicBeatState
 		}
 
 		super.update(elapsed);
+
+		MikuBG.updateTR();
 	}
 
 	var movedBack:Bool = false;
@@ -243,8 +232,6 @@ class StoryMenuState extends MusicBeatState
 
 	function selectWeek()
 	{
-		if (weekUnlocked[curDifficulty])
-		{
 			if (stopspamming == false)
 			{
 				FlxG.sound.play(Paths.sound('confirmMenu'));
@@ -281,6 +268,13 @@ class StoryMenuState extends MusicBeatState
 					loadOut.animation.finishCallback = function(huh:String){
 						LoadingState.loadAndSwitchState(new CutsceneState(), true);
 					};
+				}else if(curDifficulty ==2)
+				{
+					loadOut.alpha = 1;
+					loadOut.animation.play('transition');
+					loadOut.animation.finishCallback = function(huh:String){
+						LoadingState.loadAndSwitchState(new EstadoDeTroca(), true);
+					};
 				}
 				else
 				{
@@ -292,7 +286,6 @@ class StoryMenuState extends MusicBeatState
 					};
 				}
 			});
-		}
 	}
 
 	function changeDifficulty(change:Int = 0, directly:Bool = false):Void
@@ -300,7 +293,7 @@ class StoryMenuState extends MusicBeatState
 		if (!directly)
             curDifficulty += change;
         else
-            curDifficulty = change;
+			curDifficulty = change;
 
 		if (curDifficulty < 0)
 			curDifficulty = 2;

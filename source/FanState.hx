@@ -1,20 +1,6 @@
 package;
-import flixel.*;
-import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
-import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.addons.transition.FlxTransitionableState;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.group.FlxGroup;
-import flixel.math.FlxMath;
-import flixel.text.FlxText;
-import flixel.tweens.FlxTween;
-import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
-import flixel.FlxCamera;
-import openfl.Lib;
 
 class FanState extends MusicBeatState
 {

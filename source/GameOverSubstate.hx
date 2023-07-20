@@ -4,12 +4,10 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
-import flixel.FlxSubState;
-import flixel.math.FlxPoint;
-import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
+import flixel.util.FlxTimer;
 
 class GameOverSubstate extends MusicBeatSubstate
 {
@@ -19,24 +17,12 @@ class GameOverSubstate extends MusicBeatSubstate
 	
 	var meekoo:FlxSprite;
 
-	var stageSuffix:String = "";
+	public static var stageSuffix:String = "";
 
 	public function new(x:Float, y:Float)
 	{
 		var daStage = PlayState.curStage;
-		switch (PlayState.SONG.player1)
-		{
-			case 'bf-pixel':
-				stageSuffix = '-pixel';
-				daBf = 'bf-pixel-dead';
-			case 'bf-voca':
-				daBf = 'bfdead';
-			case 'miku':
-				stageSuffix = '-miku';
-				daBf = 'miku';
-			default:
-				daBf = 'bfdead';
-		}
+		daBf = getInfo(PlayState.SONG.player1);
 
 		super();
 
@@ -51,7 +37,7 @@ class GameOverSubstate extends MusicBeatSubstate
 		//	var mikuTex = Paths.getSparrowAtlas('expo/sadmiku');
 		//	miku.frames = mikuTex;
 		//	miku.animation.addByPrefix('sad', 'miss miku', 24, false);
-		//	miku.antialiasing = FlxG.save.data.antialiasing;
+		//	miku.antialiasing = SaveData.antialising;
 		//	miku.animation.play('sad');
 		//	add(miku);
 
@@ -77,7 +63,7 @@ class GameOverSubstate extends MusicBeatSubstate
 			meekoo.frames = meekooTex;
 		//	meekoo.animation.addByPrefix('happy', 'meekoohapi', 1, false);
 			meekoo.animation.addByPrefix('sad', 'meekoo', 1, false);
-			meekoo.antialiasing = FlxG.save.data.antialiasing;
+			meekoo.antialiasing = SaveData.antialising;
 			meekoo.animation.play('sad');
 			add(meekoo);
 
@@ -138,6 +124,12 @@ class GameOverSubstate extends MusicBeatSubstate
 		{
 			FlxG.sound.music.stop();
 
+			if (PlayState.instance.useVideo)
+			{
+				GlobalVideo.get().stop();
+				PlayState.instance.remove(PlayState.instance.videoSprite);
+			}
+
 			if (PlayState.isStoryMode)
 				FlxG.switchState(new StoryMenuState());
 			else
@@ -185,9 +177,27 @@ class GameOverSubstate extends MusicBeatSubstate
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 2, false, function()
 				{
+					if (PlayState.instance.useVideo)
+						{
+							GlobalVideo.get().stop();
+							PlayState.instance.remove(PlayState.instance.videoSprite);
+							PlayState.instance.removedVideo = true;
+						}
 					LoadingState.loadAndSwitchState(new PlayState());
 				});
 			});
 		}
 	}
+
+	public static function getInfo(char:String):String
+		{
+			switch (char)
+			{
+				case 'miku':
+					stageSuffix = '-miku';
+					return 'miku';
+				default:
+					return 'bfdead';
+			}
+		}
 }

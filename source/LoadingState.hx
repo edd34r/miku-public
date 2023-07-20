@@ -1,19 +1,12 @@
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.addons.transition.FlxTransitionableState;
-import flixel.math.FlxMath;
-import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
-import flixel.util.FlxColor;
 import haxe.io.Path;
 import lime.app.Future;
 import lime.app.Promise;
 import lime.utils.AssetLibrary;
 import lime.utils.AssetManifest;
 import lime.utils.Assets as LimeAssets;
-import openfl.utils.Assets as OpenFlAssets;
 import openfl.utils.Assets;
 
 class LoadingState extends MusicBeatState

@@ -1,7 +1,6 @@
 package;
 
 import Conductor.BPMChangeEvent;
-import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.input.actions.FlxActionInput;
 import ui.FlxVirtualPad;
@@ -10,6 +9,8 @@ class MusicBeatSubstate extends FlxSubState
 {
 	public function new()
 	{
+		CoolUtil.setFPSCap(SaveData.framerate);
+
 		super();
 	}
 

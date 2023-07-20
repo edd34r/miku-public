@@ -92,7 +92,7 @@ class Note extends FlxSprite
 		else
 		{
 			this.strumTime = strumTime;
-			rStrumTime = strumTime - (FlxG.save.data.offset + PlayState.songOffset);
+			rStrumTime = strumTime - (SaveData.offset + PlayState.songOffset);
 		}
 
 
@@ -100,8 +100,6 @@ class Note extends FlxSprite
 			this.strumTime = 0;
 
 		this.noteData = noteData;
-
-		var daStage:String = PlayState.curStage;
 
 		//defaults if no noteStyle was found in chart
 		var noteTypeCheck:String = 'normal';
@@ -119,7 +117,7 @@ class Note extends FlxSprite
 
 			setGraphicSize(Std.int(width * 0.7));
 			updateHitbox();
-			antialiasing = FlxG.save.data.antialiasing;
+			antialiasing = SaveData.antialising;
 		}
 		else
 		{
@@ -148,14 +146,14 @@ class Note extends FlxSprite
 
 					for (i in 0...4)
 					{
-						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + ' alone'); // Normal notes
-						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold'); // Hold
-						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' tail'); // Tails
+						animation.addByPrefix(dataColor[i] + 'Scroll', dataColor[i] + '0'); // Normal notes
+						animation.addByPrefix(dataColor[i] + 'hold', dataColor[i] + ' hold piece'); // Hold
+						animation.addByPrefix(dataColor[i] + 'holdend', dataColor[i] + ' hold end'); // Tails
 					}
 
 					setGraphicSize(Std.int(width * 0.7));
 					updateHitbox();
-					antialiasing = FlxG.save.data.antialiasing;
+					antialiasing = SaveData.antialising;
 			}
 		}
 
@@ -186,7 +184,7 @@ class Note extends FlxSprite
 		// and flip it so it doesn't look weird.
 		// THIS DOESN'T FUCKING FLIP THE NOTE, CONTRIBUTERS DON'T JUST COMMENT THIS OUT JESUS
 		// then what is this lol
-		if (FlxG.save.data.downscroll && sustainNote) 
+		if (SaveData.downscroll && sustainNote) 
 			flipY = true;
 
 		var stepHeight = (0.45 * Conductor.stepCrochet * FlxMath.roundDecimal(PlayStateChangeables.scrollSpeed == 1 ? PlayState.SONG.speed : PlayStateChangeables.scrollSpeed, 2));

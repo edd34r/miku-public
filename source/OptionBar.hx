@@ -1,18 +1,13 @@
 package;
 
-import flixel.group.FlxGroup.FlxTypedGroup;
-import FreeplayState.SongMetadata;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.text.FlxTypeText;
-import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.group.FlxSpriteGroup;
-import flixel.input.FlxKeyManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import flixel.util.FlxTimer;
 
 using StringTools;
+
 
 
 
@@ -44,7 +39,7 @@ class OptionBar extends FlxSpriteGroup{
     bg.animation.addByPrefix('normal','settings_brick0',24,true);
     bg.animation.addByPrefix('selected','settings_brick select0',24,true);
     }
-    bg.antialiasing = FlxG.save.data.antialiasing;
+    bg.antialiasing = SaveData.antialising;
     add(bg);
 
 
@@ -54,7 +49,7 @@ class OptionBar extends FlxSpriteGroup{
     optionText.bold = true;
     optionText.borderQuality = 1;
     optionText.text = option;
-    optionText.antialiasing = FlxG.save.data.antialiasing;
+    optionText.antialiasing = SaveData.antialising;
     add(optionText);
 
     optionValueText = new FlxText(0,0,180,'',40);
@@ -62,7 +57,7 @@ class OptionBar extends FlxSpriteGroup{
     optionValueText.setFormat(Paths.font('shit.ttf'), 38, FlxColor.WHITE, CENTER, FlxTextBorderStyle.NONE, FlxColor.TRANSPARENT);
     optionValueText.bold = true;
     optionValueText.borderQuality = 1;
-    optionValueText.antialiasing = FlxG.save.data.antialiasing;
+    optionValueText.antialiasing = SaveData.antialising;
     add(optionValueText);
     }
 

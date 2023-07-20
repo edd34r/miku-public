@@ -11,7 +11,6 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import flixel.addons.display.FlxBackdrop;
 import lime.app.Application;
 import flash.display.BitmapData;
 import openfl.Assets;
@@ -69,11 +68,8 @@ class MainMenuState extends MusicBeatState
 		characters.animation.addByPrefix('credits','credits',1,true);
 	//	characters.setGraphicSize(Std.int(characters.width * 1.0));
 	//	characters.screenCenter();
-		characters.antialiasing = FlxG.save.data.antialiasing;
+		characters.antialiasing = SaveData.antialising;
 		characters.y = -350;
-	//	var starting:FloodFill = new FloodFill(100, FlxG.height * .5 - characters.height * .5, characters, characters.width - 20, characters.height,
-	//		6, .01);
-	//	add(starting);
 		add(characters);
 		characters.animation.play('storymode');
 
@@ -81,7 +77,7 @@ class MainMenuState extends MusicBeatState
 		bars.scrollFactor.set();
 		bars.screenCenter(Y);
 		bars.updateHitbox();
-		bars.antialiasing = FlxG.save.data.antialiasing;
+		bars.antialiasing = SaveData.antialising;
 
 		camFollow = new FlxObject(0, 0, 1, 1);
 		add(camFollow);
@@ -93,7 +89,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
-		magenta.antialiasing = FlxG.save.data.antialiasing;
+		magenta.antialiasing = SaveData.antialising;
 		magenta.color = 0xFFfd719b;
 		add(magenta);
 		// magenta.scrollFactor.set();
@@ -114,7 +110,7 @@ class MainMenuState extends MusicBeatState
 			menuItem.setGraphicSize(Std.int(menuItem.width * 0.6));
 			menuItem.updateHitbox();
 			menuItem.scrollFactor.set();
-			menuItem.antialiasing = FlxG.save.data.antialiasing;
+			menuItem.antialiasing = SaveData.antialising;
 			menuItems.add(menuItem);
 			menuItem.x -= 200;
 			menuItem.alpha = 0;
@@ -201,6 +197,7 @@ class MainMenuState extends MusicBeatState
 
 		super.update(elapsed);
 
+		MikuBG.updateTR();
 	
 	}
 

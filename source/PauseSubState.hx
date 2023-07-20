@@ -1,23 +1,18 @@
 package;
 
 import flixel.FlxCamera;
-import flixel.input.gamepad.FlxGamepad;
-import openfl.Lib;
-#if windows
-import llua.Lua;
-#end
-import Controls.Control;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.FlxSubState;
-import flixel.addons.transition.FlxTransitionableState;
 import flixel.group.FlxGroup.FlxTypedGroup;
-import flixel.input.keyboard.FlxKey;
-import flixel.system.FlxSound;
+import flixel.input.gamepad.FlxGamepad;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import openfl.Lib;
+#if windows
+import llua.Lua;
+#end
 
 class PauseSubState extends MusicBeatSubstate
 {
@@ -123,29 +118,9 @@ class PauseSubState extends MusicBeatSubstate
 			menuItems.remove('Botplay');
 		}
 
-		var gamepad:FlxGamepad = FlxG.gamepads.lastActive;
-
 		var upPcontroller:Bool = false;
 		var downPcontroller:Bool = false;
-		var leftPcontroller:Bool = false;
-		var rightPcontroller:Bool = false;
-		var oldOffset:Float = 0;
 
-		if (gamepad != null && KeyBinds.gamepad)
-		{
-			upPcontroller = gamepad.justPressed.DPAD_UP;
-			downPcontroller = gamepad.justPressed.DPAD_DOWN;
-			leftPcontroller = gamepad.justPressed.DPAD_LEFT;
-			rightPcontroller = gamepad.justPressed.DPAD_RIGHT;
-		}
-
-		// pre lowercasing the song name (update)
-		var songLowercase = StringTools.replace(PlayState.SONG.song, " ", "-").toLowerCase();
-		switch (songLowercase) {
-			case 'dad-battle': songLowercase = 'dadbattle';
-			case 'philly-nice': songLowercase = 'philly';
-		}
-		var songPath = 'assets/data/' + songLowercase + '/';
 
 		if (controls.UP_P || upPcontroller)
 		{
@@ -165,12 +140,13 @@ class PauseSubState extends MusicBeatSubstate
 			{
 				case "Continuar":
 					close();
-					if (PlayStateChangeables.botPlay)
-						PlayState.botplay_usado = true;
 				case "Botplay":
 					PlayStateChangeables.botPlay = !PlayStateChangeables.botPlay;
 					levelDifficulty.visible = PlayStateChangeables.botPlay;
 					PlayState.instance.botPlayState.visible = PlayStateChangeables.botPlay;
+					#if mobileC
+					PlayState.instance.mcontrols.visible = !PlayStateChangeables.botPlay;
+					#end
 				case "Reiniciar Musica":
 					PlayState.startTime = 0;
 					if (PlayState.instance.useVideo)
@@ -195,8 +171,7 @@ class PauseSubState extends MusicBeatSubstate
 						PlayState.luaModchart = null;
 					}
 					#end
-					if (FlxG.save.data.fpsCap > 290)
-						(cast (Lib.current.getChildAt(0), Main)).setFPSCap(290);
+					CoolUtil.setFPSCap(290);
 					
 					loadOut.visible = true;
 					loadOut.animation.play('transition');

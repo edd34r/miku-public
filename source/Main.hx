@@ -1,15 +1,14 @@
 package;
 
-import flixel.util.FlxColor;
-import flixel.graphics.FlxGraphic;
 import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
+import flixel.util.FlxColor;
 import openfl.Lib;
 import openfl.display.FPS;
 import openfl.display.Sprite;
 import openfl.events.Event;
-import lime.app.Application;
+
 using StringTools;
 
 class Main extends Sprite
@@ -46,9 +45,7 @@ class Main extends Sprite
 		}
 	}
 
-	public static var webmHandler:WebmHandler;
-
-	public function setFPSCap(cap:Int)
+	public static function setFPSCap(cap:Int)
 	{
 		if (cap > FlxG.drawFramerate)
 		{
@@ -94,36 +91,7 @@ class Main extends Sprite
 		fpsVar = new FPS(10, 3, 0xFFFFFF);
 		addChild(fpsVar);
 
-		FlxG.fixedTimestep = false;
-
 		if (fpsVar != null)
-			fpsVar.visible = FlxG.save.data.fps;
-
-		#if desktop
-		if (!DiscordClient.isInitialized) {
-			DiscordClient.initialize();
-			Application.current.window.onClose.add(function() {
-				DiscordClient.shutdown();
-			});
-		}
-		#end
-	}
-	public function toggleFPS(fpsEnabled:Bool):Void {
-		fpsVar.visible = fpsEnabled;
-	}
-
-	public function changeFPSColor(color:FlxColor)
-	{
-		fpsVar.textColor = color;
-	}
-
-	public function getFPSCap():Float
-	{
-		return openfl.Lib.current.stage.frameRate;
-	}
-
-	public function getFPS():Float
-	{
-		return fpsVar.currentFPS;
+			fpsVar.visible = SaveData.showFPS;
 	}
 }

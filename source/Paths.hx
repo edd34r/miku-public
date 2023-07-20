@@ -1,17 +1,16 @@
 package;
 
-import openfl.system.System;
-import flixel.graphics.FlxGraphic;
+import openfl.display3D.textures.Texture;
+import flash.media.Sound;
 import flixel.FlxG;
+import flixel.graphics.FlxGraphic;
 import flixel.graphics.frames.FlxAtlasFrames;
-import lime.utils.Assets;
+import flixel.util.FlxDestroyUtil;
+import openfl.display.BitmapData;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
-import openfl.display.BitmapData;
-import flash.media.Sound;
-import flixel.util.FlxDestroyUtil;
-import lime.media.vorbis.VorbisFile;
-import lime.media.AudioBuffer;
+
+using StringTools;
 
 #if cpp
 import cpp.vm.Gc;
@@ -24,7 +23,6 @@ import neko.vm.Gc;
 #end
 
 
-using StringTools;
 
 class Paths
 {
@@ -34,6 +32,7 @@ class Paths
 	public static var localTrackedAssets:Array<String> = ['scrollMenu'];
 	public static var currentTrackedAssets:Map<String, FlxGraphic> = [];
 	public static var currentTrackedSounds:Map<String, Sound> = [];
+	public static var currentTrackedTextures:Map<String, Texture> = [];
 
 	public static final extensions:Map<String, String> = ["image" => "png", "audio" => "ogg", "video" => "mp4"];
 
@@ -59,6 +58,14 @@ class Paths
 					@:privateAccess
 					if (obj != null)
 					{
+						var isTexture:Bool = currentTrackedTextures.exists(key);
+						if (isTexture)
+						{
+							var texture = currentTrackedTextures.get(key);
+							texture.dispose();
+							texture = null;
+							currentTrackedTextures.remove(key);
+						}
 						OpenFlAssets.cache.removeBitmapData(key);
 						OpenFlAssets.cache.clearBitmapData(key);
 						OpenFlAssets.cache.clear(key);
@@ -144,10 +151,7 @@ class Paths
 				FlxG.bitmap.remove(graphic);
 			}
 		}
-
-		FlxG.bitmap.dumpCache();
-		FlxG.bitmap.clearUnused();
-		FlxG.bitmap.clearCache();
+		
 	}
 
 	static public var currentModDirectory:String = null;
@@ -311,10 +315,23 @@ class Paths
 				var bitmap:BitmapData = OpenFlAssets.getBitmapData(path, false);
 				var graphic:FlxGraphic = null;
 
-				graphic = FlxGraphic.fromBitmapData(bitmap, false, key);
+				if (SaveData.gpu)
+					{
+						var texture = FlxG.stage.context3D.createTexture(bitmap.width, bitmap.height, BGRA, false, 0);
+						texture.uploadFromBitmapData(bitmap);
+						currentTrackedTextures.set(key, texture);
+						bitmap.disposeImage();
+						FlxDestroyUtil.dispose(bitmap);
+						bitmap = null;
+						graphic = FlxGraphic.fromBitmapData(BitmapData.fromTexture(texture), false, key);
+					}
+					else
+						graphic = FlxGraphic.fromBitmapData(bitmap, false, key);
 
 				graphic.persist = true;
+				#if debug
 				trace('carregando: ' + key);
+				#end
 				currentTrackedAssets.set(key, graphic);
 			}
 			/*else
@@ -340,7 +357,9 @@ class Paths
 			gottenPath = 'songs:' + gottenPath;
 		if (currentTrackedSounds.exists(file))
 		{
+			#if debug
 			trace('carregando: ' + file);
+			#end
 			localTrackedAssets.push(file);
 			return currentTrackedSounds.get(file);
 		}
