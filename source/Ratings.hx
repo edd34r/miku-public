@@ -125,9 +125,9 @@ class Ratings
     public static function CalculateRanking(score:Int,scoreDef:Int,nps:Int,maxNPS:Int,accuracy:Float):String
     {
         return
-         (!PlayStateChangeables.botPlay ? "Score:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 	    	// Score																					// Accuracy Toggle
-         " | Combo Breaks:" + PlayState.misses + 																				            // 	Misses/Combo Breaks
-         " | Accuracy:" + HelperFunctions.truncateFloat(accuracy, 2) + " %" +                                                               // 	Accuracy
+         (!PlayStateChangeables.botPlay ? "Pontos:" + (Conductor.safeFrames != 10 ? score + " (" + scoreDef + ")" : "" + score) + 	    	// Score																					// Accuracy Toggle
+         " | Erros:" + PlayState.misses + 																				            // 	Misses/Combo Breaks
+         " | Precisão:" + HelperFunctions.truncateFloat(accuracy, 2) + " %" +                                                               // 	Accuracy
          " | " + GenerateLetterRank(accuracy) : ""); 																		                // 	Letter Rank
     }
 }

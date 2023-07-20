@@ -72,6 +72,7 @@ class StoryMenuState extends MusicBeatState
 		remove(loadIn);
 		};
 		loadOut.alpha = 0;
+		loadOut.visible =false;
 		loadOut.scrollFactor.set(0,0);
 		loadIn.scrollFactor.set(0,0);
 		#if windows
@@ -210,13 +211,13 @@ class StoryMenuState extends MusicBeatState
 		}
 
 		//Touch stuff
-		if (BSLTouchUtils.apertasimples(easy_button)){
+		if (BSLTouchUtils.apertasimples(easy_button) && curDifficulty != 0){ //Satisfeita agora lorena?
 			changeDifficulty(0, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}else if(BSLTouchUtils.apertasimples(normal_button)){
+		}else if(BSLTouchUtils.apertasimples(normal_button) && curDifficulty != 1){
 			changeDifficulty(1, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}else if(BSLTouchUtils.apertasimples(hard_button)){
+		}else if(BSLTouchUtils.apertasimples(hard_button) && curDifficulty != 2){
 			changeDifficulty(2, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
@@ -259,6 +260,7 @@ class StoryMenuState extends MusicBeatState
 			PlayState.SONG = Song.loadFromJson(poop, PlayState.storyPlaylist[0]);
 			PlayState.storyWeek = curDifficulty;
 			PlayState.campaignScore = 0;
+			loadOut.visible = true;
 			new FlxTimer().start(1, function(tmr:FlxTimer)
 			{
 				if (curDifficulty == 1) //Quem diria k

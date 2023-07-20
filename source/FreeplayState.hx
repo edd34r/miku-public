@@ -31,7 +31,6 @@ class FreeplayState extends MusicBeatState
 	var poop:String = "";
 	var songFormat:String = "";
 	var bpmarray = [];
-	var scoreText:FlxText;
 	var comboText:FlxText;
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
@@ -67,6 +66,7 @@ class FreeplayState extends MusicBeatState
 		loadIn.animation.finishCallback = deleteLoadIn;
 		loadOut = new Transition(0,0,'out');
 		loadOut.alpha = 0;
+		loadOut.visible = false;
 		loadOut.scrollFactor.set(0,0);
 		
 		Conductor.changeBPM(110);
@@ -94,7 +94,7 @@ class FreeplayState extends MusicBeatState
 			addWeek(['PoPiPo', 'Aishite', 'SIU', 'Disappearance'], 2, ['miku', 'miku', 'miku', 'miku-mad']);
 			addWeek(['Rolling'], 3, ['miku']);
 			addWeek(['Anamanaguchi', 'Dwelling'], 4, ['miku', 'miku']);
-			addWeek(['Infinite'], 5, ['miku']);
+			addWeek(['Infinite', 'Chug'], 5, ['miku', 'miku']);
 
 		// LOAD MUSIC
 
@@ -109,9 +109,6 @@ class FreeplayState extends MusicBeatState
 		bars.screenCenter(Y);
 		bars.updateHitbox();
 		bars.antialiasing = SaveData.antialising;
-	
-
-		var tex = Paths.getSparrowAtlas('menuBG/menus');
 		
 		for (i in 0...songs.length)
 		{
@@ -143,9 +140,10 @@ class FreeplayState extends MusicBeatState
 		thumbnail.animation.addByPrefix('7','SIU',1,true);
 		thumbnail.animation.addByPrefix('8','Disappearance',1,true);
 		thumbnail.animation.addByPrefix('9','Rolling',1,true);
-		thumbnail.animation.addByPrefix('10','Anamanaguchi',1,true); //Fiquei com preguiça de fazer uma capa de album custom pra isso. k
+		thumbnail.animation.addByPrefix('10','Anamanaguchi',1,true);
 		thumbnail.animation.addByPrefix('11','Dwelling',1,true);
 		thumbnail.animation.addByPrefix('12','Voca',1,true);
+		thumbnail.animation.addByPrefix('13','Voca',1,true);
 		thumbnail.setGraphicSize(Std.int(thumbnail.width * 0.9));
 		thumbnail.y += 50;
 		thumbnail.x += 200;
@@ -208,11 +206,6 @@ class FreeplayState extends MusicBeatState
 		FlxTween.tween(difficultyBar, {alpha: 1, x: difficultyBar.x - 300}, 0.8,{startDelay: 0.3, ease: FlxEase.smoothStepInOut});
 		FlxTween.tween(normal_button, {alpha: 1, x: normal_button.x - 300}, 0.8,{startDelay: 0.3, ease: FlxEase.smoothStepInOut});
 
-		scoreText = new FlxText(FlxG.width * 0.7, 5, 0, "", 32);
-	
-		scoreText.setFormat(Paths.font("funkin.ttf"), 32, FlxColor.WHITE, RIGHT);
-	
-		add(scoreText);
 		loadIn.animation.play('transition');
 		add(loadIn);
 		add(loadOut);
@@ -255,13 +248,13 @@ class FreeplayState extends MusicBeatState
 		MikuBG.updateTR();
 
 		//Touch stuff
-		if (BSLTouchUtils.apertasimples(easy_button)){
+		if (BSLTouchUtils.apertasimples(easy_button) && curDifficulty != 0){
 			changeDiff(0, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}else if(BSLTouchUtils.apertasimples(normal_button)){
+		}else if(BSLTouchUtils.apertasimples(normal_button) && curDifficulty != 1){
 			changeDiff(1, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
-		}else if(BSLTouchUtils.apertasimples(hard_button)){
+		}else if(BSLTouchUtils.apertasimples(hard_button) && curDifficulty != 2){
 			changeDiff(2, true);
 			FlxG.sound.play(Paths.sound('scrollMenu'));
 		}
@@ -325,6 +318,7 @@ class FreeplayState extends MusicBeatState
 			FlxTween.tween(songArray[i],{x:songArray[i].x-300,alpha:0},0.5,{ease:FlxEase.smoothStepIn,startDelay:0.1*i});
 			loadOut.animation.play('transition');
 			loadOut.alpha = 1;
+			loadOut.visible = true;
 			loadOut.animation.finishCallback = function(huh:String){FlxG.switchState(new MainMenuState());}
 		}
 	
@@ -352,6 +346,7 @@ class FreeplayState extends MusicBeatState
 			FlxFlicker.flicker(songArray[curSelected], 1, 0.06, false, false, function(flick:FlxFlicker){
 				loadOut.animation.play('transition');
 				loadOut.alpha = 1;
+				loadOut.visible = true;
 				loadOut.animation.finishCallback = function(huh:String){
 					LoadingState.loadAndSwitchState(new EstadoDeTroca());
 				}

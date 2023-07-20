@@ -82,6 +82,7 @@ class MikuOptions extends MusicBeatState
         };
 		loadOut = new Transition(0,0,'out');
 		loadOut.alpha = 0;
+        loadOut.visible = false;
 		loadOut.scrollFactor.set(0,0);
 		loadIn.scrollFactor.set(0,0);
 
@@ -163,6 +164,7 @@ class MikuOptions extends MusicBeatState
             var save:FlxSave = new FlxSave();
 		    save.bind('miku_v2', CoolUtil.getSavePath());
 		    save.flush();
+            loadOut.visible = true;
             for (i in 0...settingsBlocks.length)
                 FlxTween.tween(settingsBlocks[i],{x: settingsBlocks[i].x - 250},0.3,{ease:FlxEase.smoothStepIn,startDelay: 0.2*i});
             loadOut.alpha = 1;

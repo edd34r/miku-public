@@ -139,12 +139,6 @@ class TitleState extends MusicBeatState
 
 		var mikuBG:MikuBG = new MikuBG(0,0);
 		add(mikuBG);
-		var transparency:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('title/transparency'));
-		transparency.setGraphicSize(Std.int(transparency.width * 1.4));
-		transparency.updateHitbox();
-		transparency.screenCenter();
-		transparency.antialiasing = SaveData.antialising;
-		add(transparency);
 
 		logoBl = new FlxSprite(100, 0);
 		logoBl.frames = Paths.getSparrowAtlas('logoBumpin');

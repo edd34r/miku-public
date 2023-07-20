@@ -24,7 +24,7 @@ class SaveData
 	public static var songPosition:Null<Bool> = false;
     public static var showFPS:Null<Bool> = false;
 	public static var framerate:Null<Int> = 60;
-	public static var gpu:Null<Bool> = true;
+	public static var gpu:Null<Bool> = false;
 	public static var scrollSpeed:Null<Float> = 1;
     public static var botplay:Null<Bool> = false;
 	public static var hitSound:Null<Int> = 0;
